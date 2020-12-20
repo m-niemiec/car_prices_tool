@@ -11,6 +11,23 @@
     </head>
     <body>
 
+
+<form action="/your-name/" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Submit">
+</form>
+
+<br><br><br>
+
+<form action="/your-name/" method="post">
+    {% csrf_token %}
+    {{ optional_form.as_p }}
+    <input type="submit" value="Submit">
+</form>
+
+
+
     <br><br><br><br><br><br><br><br>
 
     <!--Main jumbotron with all content inside-->

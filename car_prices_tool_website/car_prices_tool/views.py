@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from car_prices_tool.models import Car
 from django.core import serializers
 from django.db.models import Count
+from car_prices_tool.forms import SearchCarForm, OptionalSearchCarForm
 
 
 def home(request):
@@ -23,10 +24,15 @@ def search(request):
     makes = Car.objects.values('make').annotate(entries=Count('make'))
     models = Car.objects.values('model').annotate(entries=Count('model'))
 
+    form = SearchCarForm
+    optional_form = OptionalSearchCarForm
+
     context = {
         'cars': cars,
         'makes': makes,
-        'models': models
+        'models': models,
+        'form': form,
+        'optional_form': optional_form
     }
 
     return render(request, 'car_prices_tool/search.html', context)
