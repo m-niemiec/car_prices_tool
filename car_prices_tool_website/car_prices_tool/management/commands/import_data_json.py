@@ -19,6 +19,14 @@ class Command(BaseCommand):
 
         # Create a django model object for each object in JSON
         for car in cars:
+            if car['price_currency'] != 'USD':
+                if car['price_currency'] == 'PLN':
+                    price_dollars = car['price'] * 0.27
+                if car['price_currency'] == 'EUR':
+                    price_dollars = car['price'] * 1.21
+            else:
+                price_dollars = car['price']
+
             Car.objects.create(
                 make=car['make'],
                 model=car['model'],
@@ -31,6 +39,7 @@ class Command(BaseCommand):
                 price=car['price'],
                 price_currency=car['price_currency'],
                 state=car['state'],
+                price_dollars=price_dollars
                 # date_scraped=car['date_scraped']
             )
 

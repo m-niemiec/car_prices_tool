@@ -13,6 +13,7 @@ class Car(models.Model):
     price = models.IntegerField()
     price_currency = models.CharField(max_length=10)
     state = models.CharField(max_length=10)
+    price_dollars = models.IntegerField()
 
     def __str__(self):
         return self.make

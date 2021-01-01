@@ -48,6 +48,8 @@ def search(request):
             }
 
             return results(request, context)
+        else:
+            return render(request, 'car_prices_tool/search.html', context={'form': filled_form})
 
     context = {
         'cars': cars,
@@ -76,9 +78,69 @@ def results(request, context):
     engine_power_less_more = context.get('engine_power_less_more')
     engine_power = context.get('engine_power')
 
+    cars = Car.objects.filter(make=make, model=model, state=state)
+
+    if offer_type:
+        cars = cars.filter(offer_type=offer_type)
+
+    if mileage_less_more:
+        if mileage_less_more == 'mileage_less_than':
+            cars = cars.filter(price__lte=mileage)
+        if mileage_less_more == 'mileage_more_than':
+            cars = cars.filter(price__gte=mileage)
+
+    if production_year_less_more:
+        if production_year_less_more == 'production_year_less_than':
+            cars = cars.filter(production_year__lte=production_year)
+        if production_year_less_more == 'production_year_more_than':
+            cars = cars.filter(production_year__gte=production_year)
+        if production_year_less_more == 'production_year_exact':
+            cars = cars.filter(production_year=production_year)
+
+    if price_less_more:
+        if price_currency != 'USD':
+            if price_currency == 'PLN':
+                price = price * 0.27
+            if price_currency == 'EUR':
+                price = price * 1.21
+
+        if price_less_more == 'price_less_than':
+            cars = cars.filter(price_dollars__lte=price)
+        if price_less_more == 'price_more_than':
+            cars = cars.filter(price_dollars__gte=price)
+
+    if engine_capacity_less_more:
+        if engine_capacity_less_more == 'engine_capacity_less_than':
+            cars = cars.filter(engine_power__lte=engine_power)
+        if engine_capacity_less_more == 'engine_capacity_more_than':
+            cars = cars.filter(engine_power__gte=engine_power)
+        if engine_capacity_less_more == 'engine_capacity_equal':
+            cars = cars.filter(engine_power=engine_power)
+
+    if engine_power_less_more:
+        if engine_power_less_more == 'engine_power_less_than':
+            cars = cars.filter(engine_capacity__lte=engine_capacity)
+        if engine_power_less_more == 'engine_power_more_than':
+            cars = cars.filter(engine_capacity__gte=engine_capacity)
+        if engine_power_less_more == 'engine_power_equal':
+            cars = cars.filter(engine_capacity=engine_capacity)
+
     context = {
         'make': context.get('make'),
-        'state': context.get('state')
+        'state': context.get('state'),
+        'model': context.get('model'),
+        'offer_type': context.get('offer_type'),
+        'mileage_less_more': context.get('mileage_less_more'),
+        'mileage': context.get('mileage'),
+        'production_year_less_more': context.get('production_year_less_more'),
+        'production_year': context.get('production_year'),
+        'price_less_more': context.get('price_less_more'),
+        'price': context.get('price'),
+        'price_currency': context.get('price_currency'),
+        'engine_capacity_less_more': context.get('engine_capacity_less_more'),
+        'engine_capacity': context.get('engine_capacity'),
+        'engine_power_less_more': context.get('engine_power_less_more'),
+        'engine_power': context.get('engine_power'),
     }
 
     return render(request, 'car_prices_tool/results.html', context)
