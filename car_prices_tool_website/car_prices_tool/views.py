@@ -4,6 +4,8 @@ from car_prices_tool.models import Car
 from django.core import serializers
 from django.db.models import Count
 from car_prices_tool.forms import SearchCarForm
+from django.views.generic import ListView, CreateView, UpdateView
+from django.urls import reverse_lazy
 
 
 def home(request):
@@ -25,6 +27,9 @@ def search(request):
     models = Car.objects.values('model').annotate(entries=Count('model'))
 
     form = SearchCarForm
+    form_class = SearchCarForm
+
+    success_url = reverse_lazy('search')
 
     if request.method == 'POST':
         filled_form = SearchCarForm(request.POST)
@@ -59,6 +64,12 @@ def search(request):
     }
 
     return render(request, 'car_prices_tool/search.html', context)
+
+
+def load_models(request):
+    make = request.GET.get('make')
+    models = Car.objects.values('model').distinct().filter(make=make).all()
+    return render(request, 'car_prices_tool/models_dropdown_list_options.html', {'models': models})
 
 
 def results(request, context):

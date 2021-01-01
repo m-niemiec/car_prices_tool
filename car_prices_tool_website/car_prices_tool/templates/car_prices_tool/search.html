@@ -11,7 +11,7 @@
     </head>
     <body>
 
-<form method="post">
+<form method="post" id="SearchForm" data-models-url="{% url 'ajax_load_models' %}" novalidate>
     {% csrf_token %}
     {% for field in form %}
         <p>
@@ -23,16 +23,49 @@
     <input type="submit" value="Submit">
 </form>
 
+
+
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script>
+    $("#id_make").change(function () {
+        const url = $("#SearchForm").attr("data-models-url");  // get the url of the `load_cities` view
+        const makeId = $(this).val();  // get the selected country ID from the HTML input
+
+      $.ajax({                       // initialize an AJAX request
+        url: url,                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+        data: {
+          'make': makeId       // add the country id to the GET parameters
+        },
+        success: function (data) {   // `data` is the return of the `load_cities` view function
+          $("#id_model").html(data);  // replace the contents of the city input with the data that came from the server
+        }
+      });
+
+    });
+  </script>
+
+
+
+
+
+
+
+
+
 <br><br><br>
 
-{% if form.errors %}
-    ERROR!!!
-    {% for field in form %}
-        {% for error in field.errors %}
-            <p> {{ error }} </p>
-        {% endfor %}
-    {% endfor %}
-{% endif %}
+{#{% if form.errors %}#}
+{#    ERROR!!!#}
+{#    {% for field in form %}#}
+{#        {% for error in field.errors %}#}
+{#            <p> {{ error }} </p>#}
+{#        {% endfor %}#}
+{#    {% endfor %}#}
+{#{% endif %}#}
 
 
 {#    <br><br><br><br><br><br><br><br>#}

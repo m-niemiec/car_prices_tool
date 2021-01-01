@@ -1,22 +1,30 @@
 from django import forms
-from car_prices_tool.models import Car
+from car_prices_tool.models import Car, CarMake
 
 
 class SearchCarForm(forms.Form):
     make_choices = []
-    makes = Car.objects.values('make').distinct()
+    makes = CarMake.objects.values('car_make')
+    # for make in makes:
+    #     make_choices.append((make["car_make"], f'{make["car_make"]} ({CarMake.objects.filter(make=make["car_make"]).count()})'))
     for make in makes:
-        make_choices.append((make["make"], f'{make["make"]} ({Car.objects.filter(make=make["make"]).count()})'))
-    make = forms.ChoiceField(widget=forms.RadioSelect, choices=make_choices)
+        make_choices.append((make["car_make"], f'{make["car_make"]}'))
+    make = forms.ChoiceField(choices=make_choices)
     state_choices = [('used', 'Used'), ('new', 'New'), ('both', 'Both')]
     state = forms.ChoiceField(widget=forms.RadioSelect, choices=state_choices)
 
     # Model:
-    model_choices = []
-    models = Car.objects.values('model').distinct()
-    for model in models:
-        model_choices.append((model["model"], f'{model["model"]} ({Car.objects.filter(model=model["model"]).count()})'))
-    model = forms.ChoiceField(widget=forms.RadioSelect, choices=model_choices)
+    # model_choices = []
+    # models = Car.objects.values('model').distinct()
+    # for model in models:
+    #     model_choices.append((model["model"], f'{model["model"]} ({Car.objects.filter(model=model["model"]).count()})'))
+    # model = forms.ChoiceField(choices=model_choices)
+
+    model = forms.ChoiceField()
+
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
+    #     self.fields['model'].queryset = CarMake.objects.none()
 
     # Offer type:
     offer_type_choices = [('all', 'All'),
