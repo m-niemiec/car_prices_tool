@@ -3,12 +3,12 @@ from car_prices_tool.models import Car, CarMake
 
 
 class SearchCarForm(forms.Form):
-    make_choices = []
+    make_choices = [('', '--- select make ---')]
     makes = CarMake.objects.values('car_make')
     # for make in makes:
     #     make_choices.append((make["car_make"], f'{make["car_make"]} ({CarMake.objects.filter(make=make["car_make"]).count()})'))
     for make in makes:
-        make_choices.append((make["car_make"], f'{make["car_make"]}'))
+        make_choices.append((make["car_make"], f'{make["car_make"]} ({Car.objects.filter(make=make["car_make"]).count()})'))
     make = forms.ChoiceField(choices=make_choices)
     state_choices = [('used', 'Used'), ('new', 'New'), ('both', 'Both')]
     state = forms.ChoiceField(widget=forms.RadioSelect, choices=state_choices)
@@ -20,7 +20,8 @@ class SearchCarForm(forms.Form):
     #     model_choices.append((model["model"], f'{model["model"]} ({Car.objects.filter(model=model["model"]).count()})'))
     # model = forms.ChoiceField(choices=model_choices)
 
-    model = forms.ChoiceField()
+    model_choices = [('', '--- select model ---')]
+    model = forms.ChoiceField(choices=model_choices)
 
     # def __init__(self, *args, **kwargs):
     #     super().__init__(*args, **kwargs)

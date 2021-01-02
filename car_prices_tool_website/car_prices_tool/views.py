@@ -69,7 +69,13 @@ def search(request):
 def load_models(request):
     make = request.GET.get('make')
     models = Car.objects.values('model').distinct().filter(make=make).all()
-    return render(request, 'car_prices_tool/models_dropdown_list_options.html', {'models': models})
+    models_count = []
+    for model in models:
+        models_count.append(Car.objects.filter(model=model['model']).count())
+
+    data = zip(models, models_count)
+
+    return render(request, 'car_prices_tool/models_dropdown_list_options.html', {'data': data})
 
 
 def results(request, context):
