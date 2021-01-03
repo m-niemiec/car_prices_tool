@@ -100,13 +100,13 @@ def results(request, context):
     if offer_type:
         cars = cars.filter(offer_type=offer_type)
 
-    if mileage_less_more:
+    if mileage:
         if mileage_less_more == 'mileage_less_than':
             cars = cars.filter(price__lte=mileage)
         if mileage_less_more == 'mileage_more_than':
             cars = cars.filter(price__gte=mileage)
 
-    if production_year_less_more:
+    if production_year:
         if production_year_less_more == 'production_year_less_than':
             cars = cars.filter(production_year__lte=production_year)
         if production_year_less_more == 'production_year_more_than':
@@ -114,7 +114,7 @@ def results(request, context):
         if production_year_less_more == 'production_year_exact':
             cars = cars.filter(production_year=production_year)
 
-    if price_less_more:
+    if price:
         if price_currency != 'USD':
             if price_currency == 'PLN':
                 price = price * 0.27
@@ -126,7 +126,7 @@ def results(request, context):
         if price_less_more == 'price_more_than':
             cars = cars.filter(price_dollars__gte=price)
 
-    if engine_capacity_less_more:
+    if engine_capacity:
         if engine_capacity_less_more == 'engine_capacity_less_than':
             cars = cars.filter(engine_power__lte=engine_power)
         if engine_capacity_less_more == 'engine_capacity_more_than':
@@ -134,7 +134,7 @@ def results(request, context):
         if engine_capacity_less_more == 'engine_capacity_equal':
             cars = cars.filter(engine_power=engine_power)
 
-    if engine_power_less_more:
+    if engine_power:
         if engine_power_less_more == 'engine_power_less_than':
             cars = cars.filter(engine_capacity__lte=engine_capacity)
         if engine_power_less_more == 'engine_power_more_than':
