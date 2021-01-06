@@ -18,10 +18,18 @@ from django.urls import path
 from car_prices_tool import views
 
 urlpatterns = [
+    # Admin:
     path('admin/', admin.site.urls),
-    path('', views.home),
-    path('results', views.results, name='results'),
-    path('search', views.search, name='search'),
 
+    # Templates:
+    path('', views.home, name='home'),
+    path('about', views.about, name='about'),
+    path('search', views.search, name='search'),
+    path('results', views.results, name='results'),
+
+    # Authorization:
+    path('signup', views.sign_up_user, name='signup'),
+
+    # Ajax:
     path('ajax/load-cities/', views.load_models, name='ajax_load_models')
 ]

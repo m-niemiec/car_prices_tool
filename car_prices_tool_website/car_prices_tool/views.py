@@ -1,11 +1,12 @@
-from django.shortcuts import render
-from django.http import HttpResponse
+from django.shortcuts import render, redirect
 from car_prices_tool.models import Car
-from django.core import serializers
 from django.db.models import Count
 from car_prices_tool.forms import SearchCarForm
-from django.views.generic import ListView, CreateView, UpdateView
 from django.urls import reverse_lazy
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+from django.db import IntegrityError
+from django.contrib.auth import login
 
 
 def home(request):
@@ -19,6 +20,41 @@ def home(request):
     }
 
     return render(request, 'car_prices_tool/home.html', context)
+
+
+def about(request):
+    return render(request, 'car_prices_tool/about.html')
+
+
+def sign_up_user(request):
+    if request.method == 'GET':
+        context = {
+            'form': UserCreationForm()
+        }
+
+        return render(request, 'car_prices_tool/signup.html', context)
+    else:
+        if request.POST['password1'] == request.POST['password2']:
+            try:
+                user = User.objects.create_user(request.POST['username'], request.POST['password1'])
+                user.save()
+                login(request, user)
+
+                return redirect('search')
+            except IntegrityError:
+                context = {
+                    'form': UserCreationForm(),
+                    'error': 'This username is already taken. Please choose another one.'
+                }
+
+                return render(request, 'car_prices_tool/signup.html', context)
+        else:
+            context = {
+                'form': UserCreationForm(),
+                'error': 'Password did not match!'
+            }
+
+            return render(request, 'car_prices_tool/signup.html', context)
 
 
 def search(request):
