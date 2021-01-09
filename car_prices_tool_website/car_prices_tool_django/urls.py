@@ -29,6 +29,8 @@ urlpatterns = [
 
     # Authorization:
     path('signup', views.sign_up_user, name='signup'),
+    path('login', views.log_in_user, name='login'),
+    path('logout', views.log_out_user, name='logout'),
 
     # Ajax:
     path('ajax/load-cities/', views.load_models, name='ajax_load_models')

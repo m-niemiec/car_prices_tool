@@ -3,10 +3,10 @@ from car_prices_tool.models import Car
 from django.db.models import Count
 from car_prices_tool.forms import SearchCarForm
 from django.urls import reverse_lazy
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.db import IntegrityError
-from django.contrib.auth import login
+from django.contrib.auth import login, logout, authenticate
 
 
 def home(request):
@@ -55,6 +55,35 @@ def sign_up_user(request):
             }
 
             return render(request, 'car_prices_tool/signup.html', context)
+
+
+def log_in_user(request):
+    if request.method == 'GET':
+        context = {
+            'form': AuthenticationForm()
+        }
+
+        return render(request, 'car_prices_tool/login.html', context)
+    else:
+        user = authenticate(request, username=request.POST['username'], password=request.POST['password'])
+        if user:
+            login(request, user)
+
+            return redirect('search')
+        else:
+            context = {
+                'form': AuthenticationForm(),
+                'error': 'Wrong password or username.'
+            }
+
+            return render(request, 'car_prices_tool/login.html', context)
+
+
+def log_out_user(request):
+    if request.method == 'POST':
+        logout(request)
+
+        return render(request, 'car_prices_tool/home.html')
 
 
 def search(request):

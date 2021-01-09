@@ -7,7 +7,7 @@
     <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Sign Up</title>
+        <title>Log In</title>
     </head>
     <body>
     <div class="container">
@@ -18,25 +18,20 @@
         {% endif %}
         <div class="row">
             <div class="col-md-6">
-                <h1>Sign Up:</h1><br>
+                <h1>Login:</h1><br>
                 <form method="post">
                     {% csrf_token %}
                     <div class="form-group">
                         <label for="exampleInputEmail1">Username:</label>
                         <input type="text" class="form-control" name="username" aria-describedby="emailHelp"
-                               placeholder="Enter username. It will be visible for others." required>
+                               placeholder="Enter your username." required>
                     </div>
                     <div class="form-group">
                         <label for="exampleInputPassword1">Password:</label>
-                        <input type="password" class="form-control" name="password1" id="exampleInputPassword1"
-                               placeholder="Password. Please make it strong and unique." required>
+                        <input type="password" class="form-control" name="password" id="exampleInputPassword1"
+                               placeholder="Enter your password." required>
                     </div>
-                    <div class="form-group">
-                        <label for="exampleInputPassword1">Confirm Password:</label>
-                        <input type="password" class="form-control" name="password2" id="exampleInputPassword1"
-                               placeholder="Repeat password from above." required>
-                    </div>
-                    <button type="submit" class="btn btn-info">Sign Up</button>
+                    <button type="submit" class="btn btn-info">Login</button>
                 </form>
             </div>
         </div>
