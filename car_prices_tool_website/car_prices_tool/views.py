@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from car_prices_tool.models import Car
+from car_prices_tool.models import Car, UserSearchQuery
 from django.db.models import Count
 from car_prices_tool.forms import SearchCarForm
 from django.urls import reverse_lazy
@@ -7,6 +7,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.contrib.auth import login, logout, authenticate
+from datetime import date
 
 
 def home(request):
@@ -96,6 +97,12 @@ def search(request):
 
     success_url = reverse_lazy('search')
 
+    today = date.today()
+    last_user_searches = UserSearchQuery.objects.filter(user=request.user, date__year=today.year, date__month=today.month, date__day=today.day).count()
+    searches_multiplied = last_user_searches * 10
+    available_searches = 10 - last_user_searches
+    available_searches_multiplied = available_searches * 10
+
     if request.method == 'POST':
         filled_form = SearchCarForm(request.POST)
         if filled_form.is_valid():
@@ -117,15 +124,34 @@ def search(request):
                 'engine_power': filled_form.cleaned_data['engine_power']
             }
 
-            return results(request, context)
+            if last_user_searches < 10:
+                new_search = UserSearchQuery(user=request.user, search_parameters=context)
+                new_search.save()
+
+                return render(request, 'car_prices_tool/results.html', context)
+            else:
+                context = {
+                    'quota_error': 'No searches left for today!'
+                }
+
+                return render(request, 'car_prices_tool/search.html', context)
         else:
-            return render(request, 'car_prices_tool/search.html', context={'form': filled_form})
+            context = {
+                'form': filled_form,
+                'last_user_searches': last_user_searches
+            }
+
+            return render(request, 'car_prices_tool/search.html', context)
 
     context = {
         'cars': cars,
         'makes': makes,
         'models': models,
-        'form': form
+        'form': form,
+        'last_user_searches': last_user_searches,
+        'searches_multiplied': searches_multiplied,
+        'available_searches': available_searches,
+        'available_searches_multiplied': available_searches_multiplied
     }
 
     return render(request, 'car_prices_tool/search.html', context)

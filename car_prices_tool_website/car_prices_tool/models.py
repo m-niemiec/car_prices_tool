@@ -1,4 +1,6 @@
 from django.db import models
+from django.contrib.auth.models import User
+from django.db.models import JSONField
 
 
 class CarMake(models.Model):
@@ -24,3 +26,14 @@ class Car(models.Model):
 
     def __str__(self):
         return self.make
+
+
+class UserSearchQuery(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now_add=True)
+    search_parameters = JSONField()
+
+
+class UserPremiumRank(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    rank = models.CharField(max_length=50)
