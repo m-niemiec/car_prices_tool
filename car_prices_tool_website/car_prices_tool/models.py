@@ -37,3 +37,6 @@ class UserSearchQuery(models.Model):
 class UserPremiumRank(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     rank = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.rank

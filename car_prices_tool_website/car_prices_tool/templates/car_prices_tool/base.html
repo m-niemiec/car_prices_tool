@@ -39,11 +39,17 @@
                 <a class="nav-link" href="{% url 'about' %}">About</a>
                 <a class="nav-link" href="{% url 'search' %}"> | Search for Cars | </a>
                 {% if user.is_authenticated %}
-                    Logged In as {{ user.username }}
+                    <span class="navbar-text">Logged In as <b>{{ user.username }}</b> - Account status: <b>{{ user_rank_name }}</b> - </span>
+
+                    {% if user_rank_name == 'Free' %}
+                        <a class="btn btn-success" href="{% url 'go_premium' %}" role="button">Go Premium!</a>
+                    {% endif %}
+
                     <form action="{% url 'logout' %}" method="post">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-outline-success">Logout</button>
+                        <button type="submit" class="btn btn-outline-danger">Logout</button>
                     </form>
+
                 {% else %}
                     <a class="btn btn-outline-success me-2" href="{% url 'signup' %}" role="button">Sign Up</a>
                     <a class="btn btn-outline-success me-2" href="{% url 'login' %}" role="button">Log In</a>

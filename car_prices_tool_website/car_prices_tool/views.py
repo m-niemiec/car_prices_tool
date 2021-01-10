@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from car_prices_tool.models import Car, UserSearchQuery
+from car_prices_tool.models import Car, UserSearchQuery, UserPremiumRank
 from django.db.models import Count
 from car_prices_tool.forms import SearchCarForm
 from django.urls import reverse_lazy
@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.contrib.auth import login, logout, authenticate
 from datetime import date
+from django.contrib.auth.decorators import login_required
 
 
 def home(request):
@@ -25,6 +26,32 @@ def home(request):
 
 def about(request):
     return render(request, 'car_prices_tool/about.html')
+
+
+def go_premium(request):
+    if request.method == 'GET':
+        try:
+            user_rank_name = UserPremiumRank.objects.filter(user=request.user).values('rank').get()
+        except UserPremiumRank.DoesNotExist:
+            user_rank_name = {}
+
+        if user_rank_name.get('rank') == 'Premium':
+            context = {
+                'message': 'It seems that you already have Premium account. Thank you!'
+            }
+
+            return render(request, 'car_prices_tool/go_premium.html', context)
+        else:
+            return render(request, 'car_prices_tool/go_premium.html')
+    else:
+        get_premium = UserPremiumRank(user=request.user, rank='Premium')
+        get_premium.save()
+
+        context = {
+            'message': 'Thank you very much for supporting our website! Enjoy your premium account!'
+        }
+
+        return render(request, 'car_prices_tool/go_premium.html', context)
 
 
 def sign_up_user(request):
@@ -87,6 +114,7 @@ def log_out_user(request):
         return render(request, 'car_prices_tool/home.html')
 
 
+@login_required
 def search(request):
     cars = Car.objects.all()
     makes = Car.objects.values('make').annotate(entries=Count('make'))
@@ -96,12 +124,21 @@ def search(request):
     form_class = SearchCarForm
 
     success_url = reverse_lazy('search')
+    try:
+        user_rank = UserPremiumRank.objects.filter(user=request.user).values('rank').get()
+    except UserPremiumRank.DoesNotExist:
+        user_rank = {}
 
     today = date.today()
     last_user_searches = UserSearchQuery.objects.filter(user=request.user, date__year=today.year, date__month=today.month, date__day=today.day).count()
-    searches_multiplied = last_user_searches * 10
-    available_searches = 10 - last_user_searches
+
+    if user_rank.get('rank') == 'Premium':
+        available_searches = 100 - last_user_searches
+    else:
+        available_searches = 10 - last_user_searches
+
     available_searches_multiplied = available_searches * 10
+    searches_multiplied = last_user_searches * 10
 
     if request.method == 'POST':
         filled_form = SearchCarForm(request.POST)
@@ -123,22 +160,35 @@ def search(request):
                 'engine_power_less_more': filled_form.cleaned_data['engine_power_less_more'],
                 'engine_power': filled_form.cleaned_data['engine_power']
             }
+            if user_rank.get('rank') == 'Premium':
+                if last_user_searches < 100:
+                    new_search = UserSearchQuery(user=request.user, search_parameters=context)
+                    new_search.save()
 
-            if last_user_searches < 10:
-                new_search = UserSearchQuery(user=request.user, search_parameters=context)
-                new_search.save()
+                    return render(request, 'car_prices_tool/results.html', context)
+                else:
+                    context = {
+                        'quota_error': 'No searches left for today!'
+                    }
 
-                return render(request, 'car_prices_tool/results.html', context)
+                    return render(request, 'car_prices_tool/search.html', context)
             else:
-                context = {
-                    'quota_error': 'No searches left for today!'
-                }
+                if last_user_searches < 10:
+                    new_search = UserSearchQuery(user=request.user, search_parameters=context)
+                    new_search.save()
 
-                return render(request, 'car_prices_tool/search.html', context)
+                    return render(request, 'car_prices_tool/results.html', context)
+                else:
+                    context = {
+                        'quota_error': 'No searches left for today!'
+                    }
+
+                    return render(request, 'car_prices_tool/search.html', context)
         else:
             context = {
                 'form': filled_form,
-                'last_user_searches': last_user_searches
+                'last_user_searches': last_user_searches,
+                'user_rank': user_rank
             }
 
             return render(request, 'car_prices_tool/search.html', context)
@@ -151,7 +201,8 @@ def search(request):
         'last_user_searches': last_user_searches,
         'searches_multiplied': searches_multiplied,
         'available_searches': available_searches,
-        'available_searches_multiplied': available_searches_multiplied
+        'available_searches_multiplied': available_searches_multiplied,
+        'user_rank': user_rank
     }
 
     return render(request, 'car_prices_tool/search.html', context)

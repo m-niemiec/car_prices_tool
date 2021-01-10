@@ -26,6 +26,7 @@ urlpatterns = [
     path('about', views.about, name='about'),
     path('search', views.search, name='search'),
     path('results', views.results, name='results'),
+    path('go_premium', views.go_premium, name='go_premium'),
 
     # Authorization:
     path('signup', views.sign_up_user, name='signup'),

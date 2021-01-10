@@ -13,12 +13,13 @@
 
     <div class="jumbotron jumbotron-fluid vertical-center">
         <div class="container">
+            {% if error %}
+                <div style="text-align: center;">
+                    <div class="alert alert-danger" role="alert">{{ error }}</div>
+                </div>
+            {% endif %}
             <div class="d-flex justify-content-center">
-                {% if error %}
-                    <div style="text-align: center;">
-                        <div class="alert alert-danger" role="alert">{{ error }}</div>
-                    </div>
-                {% endif %}
+
                 <div class="row w-75">
                     <div class="col-md-12">
                         <h1>Login:</h1><br>

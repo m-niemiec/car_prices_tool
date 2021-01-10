@@ -20,27 +20,50 @@
                     <!--Main container-->
                     <div class="container">
                         <br>
-                        {% if last_user_searches < 10 %}
-                            <h6>Available searches today: {{ available_searches }}</h6>
-                            <div class="progress">
-                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
-                                     aria-valuenow="{{ available_searches }}" aria-valuemin="0" aria-valuemax="10"
-                                     style="width: {{ available_searches_multiplied }}%"></div>
-                            </div>
-                        {% else %}
-                            <div class="alert alert-danger" role="alert">
-                                You exceeded your daily search quota. Please wait 24 hours or consider upgrading you
-                                account.
-                            </div>
+                        {% if user_rank.rank == 'Premium' %}
+
+                            {% if last_user_searches < 100 %}
+                                <h6>Available searches today: {{ available_searches }} <br>Your rank is premium!</h6>
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-striped progress-bar-animated"
+                                         role="progressbar"
+                                         aria-valuenow="{{ available_searches }}" aria-valuemin="0" aria-valuemax="100"
+                                         style="width: {{ available_searches }}%"></div>
+                                </div>
+                            {% else %}
+                                <div class="alert alert-danger" role="alert">
+                                    You exceeded your daily search quota. Please wait 24 hours.
+                                </div>
+                            {% endif %}
+
+                        {% endif %}
+
+
+                        {% if not user_rank.rank %}
+                            {% if last_user_searches < 10 %}
+                                <h6>Available searches today: {{ available_searches }}</h6>
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-striped progress-bar-animated"
+                                         role="progressbar"
+                                         aria-valuenow="{{ available_searches }}" aria-valuemin="0" aria-valuemax="10"
+                                         style="width: {{ available_searches_multiplied }}%"></div>
+                                </div>
+                            {% else %}
+                                <div class="alert alert-danger" role="alert">
+                                    You exceeded your daily search quota. Please wait 24 hours or consider upgrading you
+                                    account.
+                                </div>
+                            {% endif %}
+
+
+                            {% if form.errors %}
+                                <div class="alert alert-danger" role="alert">
+                                    There was an error in a form. Please look below and correct them.
+                                </div>
+                            {% endif %}
+
                         {% endif %}
                         <h1 class="display-4">What car are you looking for?</h1>
-
-                        {% if form.errors %}
-                            <div class="alert alert-danger" role="alert">
-                                There was an error in a form. Please look below and correct them.
-                            </div>
-                        {% endif %}
-
                         {% if quota_error %}
                             <div class="alert alert-danger" role="alert">
                                 {{ quota_error }}
