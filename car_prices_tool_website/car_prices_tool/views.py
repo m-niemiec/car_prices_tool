@@ -64,7 +64,7 @@ def sign_up_user(request):
     else:
         if request.POST['password1'] == request.POST['password2']:
             try:
-                user = User.objects.create_user(request.POST['username'], request.POST['password1'])
+                user = User.objects.create_user(username=request.POST['username'], password=request.POST['password1'])
                 user.save()
                 login(request, user)
 
@@ -188,7 +188,10 @@ def search(request):
             context = {
                 'form': filled_form,
                 'last_user_searches': last_user_searches,
-                'user_rank': user_rank
+                'user_rank': user_rank,
+                'searches_multiplied': searches_multiplied,
+                'available_searches': available_searches,
+                'available_searches_multiplied': available_searches_multiplied
             }
 
             return render(request, 'car_prices_tool/search.html', context)
