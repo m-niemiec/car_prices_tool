@@ -11,8 +11,8 @@ class FreeSearchCarForm(forms.Form):
 
     make = forms.ChoiceField(choices=make_choices)
     make.widget.attrs.update({'class': 'form-select'})
-    state_choices = [('used', 'Used'), ('new', 'New'), ('both', 'Both')]
-    state = forms.ChoiceField(choices=state_choices, widget=forms.RadioSelect, initial='used')
+    state_choices = [('Used', 'Used'), ('New', 'New'), ('both', 'Both')]
+    state = forms.ChoiceField(choices=state_choices, widget=forms.RadioSelect, initial='Used')
     state.widget.attrs.update({'class': 'form-horizontal', 'type': 'radio'})
     models = Car.objects.values('model').distinct()
     model_choices = [('', '--- select model ---')]
@@ -31,8 +31,8 @@ class SearchCarForm(forms.Form):
 
     make = forms.ChoiceField(choices=make_choices)
     make.widget.attrs.update({'class': 'form-select'})
-    state_choices = [('used', 'Used'), ('new', 'New'), ('both', 'Both')]
-    state = forms.ChoiceField(choices=state_choices, widget=forms.RadioSelect, initial='used')
+    state_choices = [('Used', 'Used'), ('New', 'New'), ('both', 'Both')]
+    state = forms.ChoiceField(choices=state_choices, widget=forms.RadioSelect, initial='Used')
     state.widget.attrs.update({'class': 'form-horizontal', 'type': 'radio'})
     # Model:
     # model_choices = []

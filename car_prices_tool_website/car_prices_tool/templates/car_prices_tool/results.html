@@ -11,10 +11,40 @@
     </head>
     <body>
     Results:
-
+    This many cars matched your filters: {{ cars_amount }}
     <br><br><br>
+    Average price: {{ average_price }}
+    <br>
+    Average mileage: {{ average_mileage }}
+    <br>
+    Average production year: {{ average_production_year }}
+    <br>
+    Average engine_power: {{ average_engine_power }}
+    <br>
+    Average engine_capacity: {{ average_engine_capacity }}
+    <br>
 
-    {{ filled_form }}
+    10 most popular model variants:
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Popularity</th>
+            <th scope="col">Model Variant</th>
+            <th scope="col">Count</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for variant in popular_model_variants %}
+            <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td>{{ variant.model_variant }}</td>
+                <td>{{ variant.count }}</td>
+            </tr>
+        {% endfor %}
+
+
+        </tbody>
+    </table>
 
 
     {{ make }}<br>
@@ -35,6 +65,7 @@
 
 
     {{ test_make }}
+
 
     </body>
     </html>

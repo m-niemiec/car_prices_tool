@@ -10,7 +10,7 @@ from django.db import IntegrityError
 from django.contrib.auth import login, logout, authenticate
 from datetime import date
 from django.contrib.auth.decorators import login_required
-from django.db.models import Count
+from django.db.models import Count, Avg
 
 
 def home(request):
@@ -189,7 +189,7 @@ def search(request):
                     new_search = UserSearchQuery(user=request.user, search_parameters=context)
                     new_search.save()
 
-                    return render(request, 'car_prices_tool/results.html', context)
+                    return results(request, context)
                 else:
                     context = {
                         'quota_error': 'No searches left for today!'
@@ -201,7 +201,7 @@ def search(request):
                     new_search = UserSearchQuery(user=request.user, search_parameters=context)
                     new_search.save()
 
-                    return render(request, 'car_prices_tool/results.html', context)
+                    return results(request, context)
                 else:
                     context = {
                         'quota_error': 'No searches left for today!'
@@ -266,7 +266,7 @@ def results(request, context):
 
     cars = Car.objects.filter(make=make, model=model, state=state)
 
-    if offer_type:
+    if offer_type != 'all':
         cars = cars.filter(offer_type=offer_type)
 
     if mileage:
@@ -311,7 +311,31 @@ def results(request, context):
         if engine_power_less_more == 'engine_power_equal':
             cars = cars.filter(engine_capacity=engine_capacity)
 
+    cars_amount = cars.count()
+
+    average_price = '{:.2f}'.format(cars.aggregate(Avg('price'))['price__avg'])
+    average_mileage = '{:.2f}'.format(cars.aggregate(Avg('mileage'))['mileage__avg'])
+    average_production_year = int(cars.aggregate(Avg('production_year'))['production_year__avg'])
+    average_engine_power = int(cars.aggregate(Avg('engine_power'))['engine_power__avg'])
+    average_engine_capacity = '{:.2f}'.format(cars.aggregate(Avg('engine_capacity'))['engine_capacity__avg'])
+
+    popular_model_variants = cars.values('model_variant').annotate(count=Count('model_variant')).order_by('count').reverse()[:10]
+
+    # for popular_model_variant in popular_model_variants:
+    #     f'{popular_model_variant}' = '{:.2f}'.format(cars.aggregate(Avg('price'))['price__avg'])
+    #     model_variants_average_mileage = '{:.2f}'.format(cars.aggregate(Avg('mileage'))['mileage__avg'])
+    #     model_variants_average_production_year = int(cars.aggregate(Avg('production_year'))['production_year__avg'])
+    #     model_variants_average_engine_power = int(cars.aggregate(Avg('engine_power'))['engine_power__avg'])
+    #     model_variants_average_engine_capacity = '{:.2f}'.format(cars.aggregate(Avg('engine_capacity'))['engine_capacity__avg'])
+
     context = {
+        'cars_amount': cars_amount,
+        'average_price': average_price,
+        'average_mileage': average_mileage,
+        'average_production_year': average_production_year,
+        'average_engine_power': average_engine_power,
+        'average_engine_capacity': average_engine_capacity,
+        'popular_model_variants': popular_model_variants,
         'make': context.get('make'),
         'state': context.get('state'),
         'model': context.get('model'),
