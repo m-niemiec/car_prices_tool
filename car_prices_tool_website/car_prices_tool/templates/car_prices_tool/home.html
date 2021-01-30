@@ -96,9 +96,39 @@
             <br>
             <p class="lead">
                 Maybe you are wondering which production years are the most popular? Well, here you go:</p>
-            {% include 'car_prices_tool/jscharts/popular_production_years.html' %}
+            <div class="d-flex justify-content-center">
+                <container>
+                    {% include 'car_prices_tool/jscharts/popular_production_years.html' %}
+
+                    <br><br><br>
+
+                    <div class="row">
+                        <div class="col-auto">
+                            {% include 'car_prices_tool/jscharts/average_cars_used_price.html' %}
+                        </div>
+                        <div class="col-auto">
+                            {% include 'car_prices_tool/jscharts/average_cars_used_mileage.html' %}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-auto">
+                            {% include 'car_prices_tool/jscharts/average_cars_used_enginecapacity.html' %}
+                        </div>
+                        <div class="col-auto">
+                            {% include 'car_prices_tool/jscharts/average_cars_used_enginepower.html' %}
+                        </div>
+                    </div>
+                </container>
+
+            </div>
             <br>
-            {% include 'car_prices_tool/jscharts/average_cars_used_info.html' %}
+
+            <br>
+
+            <br>
+
+            <br>
+
             <ul>
                 <p class="lead">
                     And if you liked what you see. <b>Please make an account to be able to not only search cars by make,

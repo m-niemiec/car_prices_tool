@@ -42,7 +42,7 @@ def home(request):
             'cars_below_2': cars_below_2,
             'home_popularmakes_barchart': all_jscharts.home_popularmakes_barchart(),
             'home_popularproductionyears_piechart': all_jscharts.home_popularproductionyears_piechart(),
-            'home_average_cars_used_price_radarchart': all_jscharts.home_average_cars_used_price_radarchart()
+            'home_average_cars_used_info_radarchart': all_jscharts.home_average_cars_used_info_radarchart()
         }
 
         return render(request, 'car_prices_tool/home.html', context)

@@ -81,19 +81,19 @@ def home_average_cars_used_info_radarchart():
     for make in makes:
         average_cars_used_labels.append(make["make"])
         average_price = Car.objects.filter(make=make["make"]).filter(state='Used').aggregate(Avg('price'))
-        average_cars_used_price_list.append(average_price['price__avg'])
-        average_price = Car.objects.filter(make=make["make"]).filter(state='Used').aggregate(Avg('mileage'))
-        average_cars_used_mileage_list.append(average_price['mileage__avg'])
-        average_price = Car.objects.filter(make=make["make"]).filter(state='Used').aggregate(Avg('engine_power'))
-        average_cars_used_enginepower_list.append(average_price['engine_power__avg'])
-        average_price = Car.objects.filter(make=make["make"]).filter(state='Used').aggregate(Avg('engine_capacity'))
-        average_cars_used_enginecapacity_list.append(average_price['engine_capacity__avg'])
+        average_cars_used_price_list.append(int(average_price['price__avg']))
+        average_mileage = Car.objects.filter(make=make["make"]).filter(state='Used').aggregate(Avg('mileage'))
+        average_cars_used_mileage_list.append(int(average_mileage['mileage__avg']))
+        average_engine_power = Car.objects.filter(make=make["make"]).filter(state='Used').aggregate(Avg('engine_power'))
+        average_cars_used_enginepower_list.append(int(average_engine_power['engine_power__avg']))
+        average_engine_capacity = Car.objects.filter(make=make["make"]).filter(state='Used').aggregate(Avg('engine_capacity'))
+        average_cars_used_enginecapacity_list.append('{:.2f}'.format(average_engine_capacity['engine_capacity__avg']))
 
     context = {
         'data_price': average_cars_used_price_list,
-        'data_mileage': average_cars_used_price_list,
-        'data_enginepower': average_cars_used_price_list,
-        'data_enginecapacity': average_cars_used_price_list,
+        'data_mileage': average_cars_used_mileage_list,
+        'data_enginepower': average_cars_used_enginepower_list,
+        'data_enginecapacity': average_cars_used_enginecapacity_list,
         'labels': average_cars_used_labels,
         'charts_backgroung_colors': charts_backgroung_colors,
         'charts_border_colors': charts_border_colors,
