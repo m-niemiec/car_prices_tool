@@ -14,8 +14,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from car_prices_tool import views
+import debug_toolbar
 
 urlpatterns = [
     # Admin:
@@ -34,5 +35,7 @@ urlpatterns = [
     path('logout', views.log_out_user, name='logout'),
 
     # Ajax:
-    path('ajax/load-cities/', views.load_models, name='ajax_load_models')
+    path('ajax/load-cities/', views.load_models, name='ajax_load_models'),
+
+    path(r'^__debug__', include(debug_toolbar.urls))
 ]

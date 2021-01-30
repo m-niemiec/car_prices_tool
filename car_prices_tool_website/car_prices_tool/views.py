@@ -1,7 +1,8 @@
+from car_prices_tool import all_jscharts
 from django.shortcuts import render, redirect
-from car_prices_tool.models import Car, UserSearchQuery, UserPremiumRank
+from car_prices_tool.models import Car, UserSearchQuery, UserPremiumRank, CarMake
 from django.db.models import Count
-from car_prices_tool.forms import SearchCarForm
+from car_prices_tool.forms import SearchCarForm, FreeSearchCarForm
 from django.urls import reverse_lazy
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
@@ -9,19 +10,42 @@ from django.db import IntegrityError
 from django.contrib.auth import login, logout, authenticate
 from datetime import date
 from django.contrib.auth.decorators import login_required
+from django.db.models import Count
 
 
 def home(request):
-    cars = Car.objects.filter()
-    cars_below = Car.objects.filter(mileage__lte=150000)
-    cars_below_2 = Car.objects.filter(price__lte=150000)
-    context = {
-        'cars': cars,
-        'cars_below': cars_below,
-        'cars_below_2': cars_below_2
-    }
+    cars = Car.objects.all()
+    makes = Car.objects.values('make').annotate(entries=Count('make'))
+    models = Car.objects.values('model').annotate(entries=Count('model'))
 
-    return render(request, 'car_prices_tool/home.html', context)
+    form = FreeSearchCarForm
+
+    if request.method == 'POST':
+        filled_form = FreeSearchCarForm(request.POST)
+        if filled_form.is_valid():
+            context = {
+                'make': filled_form.cleaned_data['make'],
+                'state': filled_form.cleaned_data['state'],
+                'model': filled_form.cleaned_data['model'],
+            }
+
+            return render(request, 'car_prices_tool/results.html', context)
+    else:
+        cars = Car.objects.filter()
+        cars_below = Car.objects.filter(mileage__lte=150000)
+        cars_below_2 = Car.objects.filter(price__lte=150000)
+
+        context = {
+            'form': form,
+            'cars': cars,
+            'cars_below': cars_below,
+            'cars_below_2': cars_below_2,
+            'home_popularmakes_barchart': all_jscharts.home_popularmakes_barchart(),
+            'home_popularproductionyears_piechart': all_jscharts.home_popularproductionyears_piechart(),
+            'home_average_cars_used_price_radarchart': all_jscharts.home_average_cars_used_price_radarchart()
+        }
+
+        return render(request, 'car_prices_tool/home.html', context)
 
 
 def about(request):
