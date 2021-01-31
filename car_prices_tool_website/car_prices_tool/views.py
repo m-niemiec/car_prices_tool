@@ -11,6 +11,12 @@ from django.contrib.auth import login, logout, authenticate
 from datetime import date
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Avg
+from django import template
+
+register = template.Library()
+
+usd_pln = 3.73
+usd_eur = 0.82
 
 
 def home(request):
@@ -320,13 +326,24 @@ def results(request, context):
     average_engine_capacity = '{:.2f}'.format(cars.aggregate(Avg('engine_capacity'))['engine_capacity__avg'])
 
     popular_model_variants = cars.values('model_variant').annotate(count=Count('model_variant')).order_by('count').reverse()[:10]
+    pmv_dict = {}
 
-    # for popular_model_variant in popular_model_variants:
-    #     f'{popular_model_variant}' = '{:.2f}'.format(cars.aggregate(Avg('price'))['price__avg'])
-    #     model_variants_average_mileage = '{:.2f}'.format(cars.aggregate(Avg('mileage'))['mileage__avg'])
-    #     model_variants_average_production_year = int(cars.aggregate(Avg('production_year'))['production_year__avg'])
-    #     model_variants_average_engine_power = int(cars.aggregate(Avg('engine_power'))['engine_power__avg'])
-    #     model_variants_average_engine_capacity = '{:.2f}'.format(cars.aggregate(Avg('engine_capacity'))['engine_capacity__avg'])
+    for pmv in popular_model_variants:
+        pmv_dict[f'{pmv["model_variant"]}'] = []
+        pmv_dict[f'{pmv["model_variant"]}'].append('{:.2f}'.format(cars.filter(model_variant=pmv["model_variant"]).aggregate(Avg('price_dollars'))['price_dollars__avg'] * usd_pln))
+        pmv_dict[f'{pmv["model_variant"]}'].append('{:.2f}'.format(cars.filter(model_variant=pmv["model_variant"]).aggregate(Avg('price_dollars'))['price_dollars__avg']))
+        pmv_dict[f'{pmv["model_variant"]}'].append('{:.2f}'.format(cars.filter(model_variant=pmv["model_variant"]).aggregate(Avg('price_dollars'))['price_dollars__avg'] * usd_eur))
+        pmv_dict[f'{pmv["model_variant"]}'].append(int(cars.filter(model_variant=pmv["model_variant"]).aggregate(Avg('mileage'))['mileage__avg']))
+        pmv_dict[f'{pmv["model_variant"]}'].append(int(cars.filter(model_variant=pmv["model_variant"]).aggregate(Avg('production_year'))['production_year__avg']))
+        pmv_dict[f'{pmv["model_variant"]}'].append(int(cars.filter(model_variant=pmv["model_variant"]).aggregate(Avg('engine_power'))['engine_power__avg']))
+        pmv_dict[f'{pmv["model_variant"]}'].append('{:.2f}'.format(cars.filter(model_variant=pmv["model_variant"]).aggregate(Avg('engine_capacity'))['engine_capacity__avg']))
+
+    pmv_info_dict = {}
+
+    for pmv in popular_model_variants:
+        pmv_info_dict[f'{pmv["model_variant"]}'] = []
+        temp_production_year = cars.filter(model_variant=pmv["model_variant"]).annotate(count=Count('production_year')).order_by('count').reverse()[:10]
+        pmv_info_dict[f'{pmv["model_variant"]}'].append(temp_production_year)
 
     context = {
         'cars_amount': cars_amount,
@@ -336,6 +353,7 @@ def results(request, context):
         'average_engine_power': average_engine_power,
         'average_engine_capacity': average_engine_capacity,
         'popular_model_variants': popular_model_variants,
+        'pmv_dict': pmv_dict,
         'make': context.get('make'),
         'state': context.get('state'),
         'model': context.get('model'),
