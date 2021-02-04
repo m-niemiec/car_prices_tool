@@ -12,6 +12,7 @@ from datetime import date
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Avg
 from django import template
+import pendulum
 
 register = template.Library()
 
@@ -340,12 +341,38 @@ def results(request, context):
 
     pmv_info_dict = {}
 
+    pmv_info_dict_price = {}
+    pmv_info_dict_mileage = {}
+
+    current_year = pendulum.now('UTC')
+    period = pendulum.period(current_year.subtract(years=10), current_year)
+    years_list = []
+
+    for year in period.range('years'):
+        years_list.append(year.year)
+
     for pmv in popular_model_variants:
-        pmv_info_dict[f'{pmv["model_variant"]}'] = []
-        temp_production_year = cars.filter(model_variant=pmv["model_variant"]).annotate(count=Count('production_year')).order_by('count').reverse()[:10]
-        pmv_info_dict[f'{pmv["model_variant"]}'].append(temp_production_year)
+        pmv_info_dict_price[f'{pmv["model_variant"]}'] = []
+        pmv_info_dict_mileage[f'{pmv["model_variant"]}'] = []
+        for year in period.range('years'):
+            price = cars.filter(model_variant=pmv["model_variant"], production_year=year.year).aggregate(Avg('price_dollars'))['price_dollars__avg']
+            if price:
+                pmv_info_dict_price[f'{pmv["model_variant"]}'].append(price)
+            else:
+                pmv_info_dict_price[f'{pmv["model_variant"]}'].append(0)
+            mileage = cars.filter(model_variant=pmv["model_variant"], production_year=year.year).aggregate(Avg('mileage'))['mileage__avg']
+            if mileage:
+                pmv_info_dict_mileage[f'{pmv["model_variant"]}'].append(mileage)
+            else:
+                pmv_info_dict_mileage[f'{pmv["model_variant"]}'].append(0)
+
+
 
     context = {
+        'years_list': years_list,
+        'pmv_info_dict': pmv_info_dict,
+        'pmv_info_dict_price': pmv_info_dict_price,
+        'pmv_info_dict_mileage': pmv_info_dict_mileage,
         'cars_amount': cars_amount,
         'average_price': average_price,
         'average_mileage': average_mileage,

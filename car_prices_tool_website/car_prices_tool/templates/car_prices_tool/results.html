@@ -62,7 +62,7 @@
             This many cars matched your filters: {{ cars_amount }}.
             <br>
 
-        <h1 class="display-6">Your results have:</h1>
+            <h1 class="display-6">Your results have:</h1>
 
             <table class="table">
                 <thead>
@@ -125,24 +125,46 @@
                 </tbody>
             </table>
 
-        Learn more about {{ popular_model_variants.1.model_variant }}
+            {{ pmv_info_dict }}
+            <br><br>
+            {{ test }}
 
+            <br><br><br>
+            Learn more about {{ popular_model_variants.1.model_variant }}
+            <br><br><br>
 
-{#            {{ make }}<br>#}
-{#            {{ state }}<br>#}
-{#            {{ model }}<br>#}
-{#            {{ offer_type }}<br>#}
-{#            {{ mileage_less_more }}<br>#}
-{#            {{ mileage }}<br>#}
-{#            {{ production_year_less_more }}<br>#}
-{#            {{ production_year }}<br>#}
-{#            {{ price_less_more }}<br>#}
-{#            {{ price }}<br>#}
-{#            {{ price_currency }}<br>#}
-{#            {{ engine_capacity_less_more }}<br>#}
-{#            {{ engine_capacity }}<br>#}
-{#            {{ engine_power_less_more }}<br>#}
-{#            {{ engine_power }}<br>#}
+            {% for model_variant in popular_model_variants %}
+                {{ model_variant.model_variant }}<br>
+                {% get_item_2 pmv_info_dict_price model_variant.model_variant %}<br>
+                {% get_item_2 pmv_info_dict_mileage model_variant.model_variant %}<br>
+
+                <div class="chartjs-wrapper">
+                    <canvas id="{{ model_variant.model_variant }}" class="chartjs" width="undefined" height="undefined"></canvas>
+                    <script>new Chart(document.getElementById("{{ model_variant.model_variant }}"), {
+                        "type": "line",
+                        "data": {
+                            "labels": {{ years_list }},
+                            "datasets": [{
+                                "label": "Price (usd)",
+                                "data": {% get_item_2 pmv_info_dict_price model_variant.model_variant %},
+                                "fill": false,
+                                "borderColor": "rgb(75, 192, 192)",
+                                "lineTension": 0
+                            },
+                            {
+                                "label": "Mileage (km)",
+                                "data": {% get_item_2 pmv_info_dict_mileage model_variant.model_variant %},
+                                "fill": false,
+                                "borderColor": "rgb(75,94,192)",
+                                "lineTension": 0
+                            }]
+                        },
+                        "options": {}
+                    });</script>
+                </div>
+
+                <br>
+            {% endfor %}
 
         </div>
     </body>
