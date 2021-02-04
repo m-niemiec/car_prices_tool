@@ -111,16 +111,15 @@
                         <th scope="row">{{ forloop.counter }}</th>
                         <td>{{ variant.model_variant }}</td>
                         <td>{{ variant.count }}</td>
-                        <td>{% get_item pmv_dict variant.model_variant 0 %}</td>
-                        <td>{% get_item pmv_dict variant.model_variant 1 %}</td>
-                        <td>{% get_item pmv_dict variant.model_variant 2 %}</td>
-                        <td>{% get_item pmv_dict variant.model_variant 3 %}</td>
-                        <td>{% get_item pmv_dict variant.model_variant 4 %}</td>
-                        <td>{% get_item pmv_dict variant.model_variant 5 %}</td>
-                        <td>{% get_item pmv_dict variant.model_variant 6 %}</td>
+                        <td>{% get_dict_key_index pmv_dict variant.model_variant 0 %}</td>
+                        <td>{% get_dict_key_index pmv_dict variant.model_variant 1 %}</td>
+                        <td>{% get_dict_key_index pmv_dict variant.model_variant 2 %}</td>
+                        <td>{% get_dict_key_index pmv_dict variant.model_variant 3 %}</td>
+                        <td>{% get_dict_key_index pmv_dict variant.model_variant 4 %}</td>
+                        <td>{% get_dict_key_index pmv_dict variant.model_variant 5 %}</td>
+                        <td>{% get_dict_key_index pmv_dict variant.model_variant 6 %}</td>
                     </tr>
                 {% endfor %}
-
 
                 </tbody>
             </table>
@@ -133,38 +132,67 @@
             Learn more about {{ popular_model_variants.1.model_variant }}
             <br><br><br>
 
-            {% for model_variant in popular_model_variants %}
-                {{ model_variant.model_variant }}<br>
-                {% get_item_2 pmv_info_dict_price model_variant.model_variant %}<br>
-                {% get_item_2 pmv_info_dict_mileage model_variant.model_variant %}<br>
+            <div class="accordion accordion-flush" id="accordionFlushExample">
 
-                <div class="chartjs-wrapper">
-                    <canvas id="{{ model_variant.model_variant }}" class="chartjs" width="undefined" height="undefined"></canvas>
-                    <script>new Chart(document.getElementById("{{ model_variant.model_variant }}"), {
-                        "type": "line",
-                        "data": {
-                            "labels": {{ years_list }},
-                            "datasets": [{
-                                "label": "Price (usd)",
-                                "data": {% get_item_2 pmv_info_dict_price model_variant.model_variant %},
-                                "fill": false,
-                                "borderColor": "rgb(75, 192, 192)",
-                                "lineTension": 0
-                            },
-                            {
-                                "label": "Mileage (km)",
-                                "data": {% get_item_2 pmv_info_dict_mileage model_variant.model_variant %},
-                                "fill": false,
-                                "borderColor": "rgb(75,94,192)",
-                                "lineTension": 0
-                            }]
-                        },
-                        "options": {}
-                    });</script>
-                </div>
 
-                <br>
-            {% endfor %}
+                {% for model_variant in popular_model_variants %}
+
+
+
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="flush-heading{{ forloop.counter }}">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#flush-collapse{{ forloop.counter }}" aria-expanded="false"
+                                    aria-controls="flush-collapse{{ forloop.counter }}">
+                                {{ model_variant.model_variant }}
+                            </button>
+                        </h2>
+                        <div id="flush-collapse{{ forloop.counter }}" class="accordion-collapse collapse"
+                             aria-labelledby="flush-heading{{ forloop.counter }}"
+                             data-bs-parent="#accordionFlushExample">
+                            <div class="accordion-body">
+                                <div class="chartjs-wrapper">
+                                    <canvas id="{{ model_variant.model_variant }}" class="chartjs" width="undefined"
+                                            height="undefined"></canvas>
+                                    <script>new Chart(document.getElementById("{{ model_variant.model_variant }}"), {
+                                        "type": "line",
+                                        "data": {
+                                            "labels": {{ years_list }},
+                                            "datasets": [{
+                                                "label": "Price (usd)",
+                                                "data": {% get_dict_key pmv_info_dict_price model_variant.model_variant %},
+                                                "fill": false,
+                                                "borderColor": "rgb(75, 192, 192)",
+                                                "lineTension": 0
+                                            },
+                                                {
+                                                    "label": "Mileage (km)",
+                                                    "data": {% get_dict_key pmv_info_dict_mileage model_variant.model_variant %},
+                                                    "fill": false,
+                                                    "borderColor": "rgb(75,94,192)",
+                                                    "lineTension": 0
+                                                }]
+                                        },
+                                        "options": {}
+                                    });</script>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+
+
+
+
+
+                    <br>
+                {% endfor %}
+
+            </div>
 
         </div>
     </body>
