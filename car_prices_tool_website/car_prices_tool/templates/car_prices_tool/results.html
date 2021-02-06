@@ -123,15 +123,8 @@
 
                 </tbody>
             </table>
-
-            {{ pmv_info_dict }}
-            <br><br>
-            {{ test }}
-
-            <br><br><br>
-            Learn more about {{ popular_model_variants.1.model_variant }}
-            <br><br><br>
-
+            <br>
+            <h1 class="display-6">Learn more about:</h1>
             <div class="accordion accordion-flush" id="accordionFlushExample">
 
 
@@ -141,6 +134,7 @@
 
 
                     <div class="accordion-item">
+
                         <h2 class="accordion-header" id="flush-heading{{ forloop.counter }}">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                                     data-bs-target="#flush-collapse{{ forloop.counter }}" aria-expanded="false"
@@ -152,6 +146,7 @@
                              aria-labelledby="flush-heading{{ forloop.counter }}"
                              data-bs-parent="#accordionFlushExample">
                             <div class="accordion-body">
+
                                 <div class="chartjs-wrapper">
                                     <canvas id="{{ model_variant.model_variant }}" class="chartjs" width="undefined"
                                             height="undefined"></canvas>
@@ -176,6 +171,7 @@
                                         },
                                         "options": {}
                                     });</script>
+                                    <div style="text-align: center;">Production Year</div>
                                 </div>
                             </div>
                         </div>
