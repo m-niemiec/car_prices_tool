@@ -15,46 +15,56 @@
         <div class="container">
             <h1 class="display-4">Results:</h1>
             Apparently you were looking for {{ state }} {{ make }} {{ model }} in {{ offer_type }} offer types.
-            {% if mileage_less_more %}
-                {% if mileage_less_more is 'mileage_less_than' %}
+
+            {% if mileage %}
+                <br>
+                {% if mileage_less_more == 'mileage_less_than' %}
                     With mileage less than {{ mileage }}.
                 {% endif %}
-                {% if mileage_less_more is 'mileage_more_than' %}
+                {% if mileage_less_more == 'mileage_more_than' %}
                     With mileage more than {{ mileage }}.
                 {% endif %}
             {% endif %}
-            {% if production_year_less_more %}
-                {% if production_year_less_more is 'production_year_less_than' %}
+
+            {% if production_year %}
+                <br>
+                {% if production_year_less_more == 'production_year_less_than' %}
                     Produced earlier than {{ production_year }}.
                 {% endif %}
-                {% if production_year_less_more is 'production_year_more_than' %}
+                {% if production_year_less_more == 'production_year_more_than' %}
                     Produced later than {{ production_year }}.
                 {% endif %}
             {% endif %}
-            {% if price_less_more %}
-                {% if price_less_more is 'price_less_than' %}
+
+            {% if price %}
+                <br>
+                {% if price_less_more == 'price_less_than' %}
                     With price less than {{ price }} {{ price_currency }}.
                 {% endif %}
-                {% if price_less_more is 'price_more_than' %}
+                {% if price_less_more == 'price_more_than' %}
                     With price more than {{ price }} {{ price_currency }}.
                 {% endif %}
             {% endif %}
-            {% if engine_capacity_less_more %}
-                {% if engine_capacity_less_more is 'engine_capacity_less_than' %}
+
+            {% if engine_capacity %}
+                <br>
+                {% if engine_capacity_less_more == 'engine_capacity_less_than' %}
                     With engine capacity less than {{ engine_capacity }}.
                 {% endif %}
-                {% if engine_capacity_less_more is 'engine_capacity_more_than' %}
+                {% if engine_capacity_less_more == 'engine_capacity_more_than' %}
                     With engine capacity more than {{ engine_capacity }}.
                 {% endif %}
-                {% if engine_capacity_less_more is 'engine_capacity_equal' %}
+                {% if engine_capacity_less_more == 'engine_capacity_equal' %}
                     With engine capacity equal to {{ engine_capacity }}.
                 {% endif %}
             {% endif %}
-            {% if engine_power_less_more %}
-                {% if engine_power_less_more is 'engine_power_less_than' %}
+
+            {% if engine_power %}
+                <br>
+                {% if engine_power_less_more == 'engine_power_less_than' %}
                     And engine power less than {{ engine_capacity }}.
                 {% endif %}
-                {% if engine_power_less_more is 'engine_power_more_than' %}
+                {% if engine_power_less_more == 'engine_power_more_than' %}
                     And engine power more than {{ engine_capacity }}.
                 {% endif %}
             {% endif %}
@@ -78,9 +88,9 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td>{{ average_price }}</td>
-                    <td>{{ average_price }}</td>
-                    <td>{{ average_price }}</td>
+                    <td>{{ average_price_pln }}</td>
+                    <td>{{ average_price_usd }}</td>
+                    <td>{{ average_price_eur }}</td>
                     <td>{{ average_mileage }}</td>
                     <td>{{ average_production_year }}</td>
                     <td>{{ average_engine_power }}</td>
