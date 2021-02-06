@@ -274,16 +274,16 @@ def results(request, context):
     model = context.get('model')
     offer_type = context.get('offer_type')
     mileage_less_more = context.get('mileage_less_more')
-    mileage = context.get('mileage')
+    mileage = None if context.get('mileage') == '' else context.get('mileage')
     production_year_less_more = context.get('production_year_less_more')
-    production_year = context.get('production_year')
+    production_year = None if context.get('production_year') == '' else context.get('production_year')
     price_less_more = context.get('price_less_more')
-    price = context.get('price')
+    price = None if context.get('price') == '' else context.get('price')
     price_currency = context.get('price_currency')
     engine_capacity_less_more = context.get('engine_capacity_less_more')
-    engine_capacity = context.get('engine_capacity')
+    engine_capacity = None if context.get('engine_capacity') == '' else context.get('engine_capacity')
     engine_power_less_more = context.get('engine_power_less_more')
-    engine_power = context.get('engine_power')
+    engine_power = None if context.get('engine_power') == '' else context.get('engine_power')
 
     cars = Car.objects.filter(make=make, model=model, state=state)
 
@@ -340,7 +340,8 @@ def results(request, context):
     average_engine_power = int(cars.aggregate(Avg('engine_power'))['engine_power__avg'])
     average_engine_capacity = '{:.2f}'.format(cars.aggregate(Avg('engine_capacity'))['engine_capacity__avg'])
 
-    popular_model_variants = cars.values('model_variant').annotate(count=Count('model_variant')).order_by('count').reverse()[:10]
+    popular_model_variants = cars.filter(model_variant__isnull=False).values('model_variant').annotate(count=Count('model_variant')).order_by('count').reverse()[:10]
+
     pmv_dict = {}
 
     for pmv in popular_model_variants:
@@ -379,8 +380,6 @@ def results(request, context):
                 pmv_info_dict_mileage[f'{pmv["model_variant"]}'].append(mileage)
             else:
                 pmv_info_dict_mileage[f'{pmv["model_variant"]}'].append(0)
-
-
 
     context = {
         'years_list': years_list,
