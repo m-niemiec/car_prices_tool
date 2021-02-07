@@ -252,7 +252,7 @@ def search(request):
 
 def load_models(request):
     make = request.GET.get('make')
-    models = Car.objects.values('model').distinct().filter(make=make).all()
+    models = Car.objects.values('model').filter(make=make).annotate(count=Count('make')).order_by('count').distinct().reverse()
     models_count = []
     for model in models:
         models_count.append(Car.objects.filter(model=model['model']).count())
