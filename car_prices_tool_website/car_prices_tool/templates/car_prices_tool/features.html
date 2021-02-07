@@ -75,9 +75,11 @@
                 </p>
             </ul>
             <br>
-            <div style="text-align: center;">
-                <a class="btn btn-success btn-lg" href="{% url 'signup' %}" role="button">Sign Up Now!</a>
-            </div>
+            {% if not user.is_authenticated %}
+                <div style="text-align: center;">
+                    <a class="btn btn-success btn-lg" href="{% url 'signup' %}" role="button">Sign Up Now!</a>
+                </div>
+            {% endif %}
             <br>
         </div>
     </div>
