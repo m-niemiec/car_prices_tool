@@ -1,18 +1,20 @@
-from car_prices_tool import all_jscharts
-from django.shortcuts import render, redirect
-from car_prices_tool.models import Car, UserSearchQuery, UserPremiumRank, CarMake
-from django.db.models import Count
-from car_prices_tool.forms import SearchCarForm, FreeSearchCarForm
-from django.urls import reverse_lazy
+import pendulum
+from datetime import date
+
+from django import template
+from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.db import IntegrityError
-from django.contrib.auth import login, logout, authenticate
-from datetime import date
-from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Avg
-from django import template
-import pendulum
+from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
+
+from car_prices_tool import all_jscharts
+from car_prices_tool.forms import SearchCarForm, FreeSearchCarForm
+from car_prices_tool.models import Car, UserSearchQuery, UserPremiumRank
+
 
 register = template.Library()
 
@@ -21,10 +23,6 @@ usd_eur = 0.82
 
 
 def home(request):
-    cars = Car.objects.all()
-    makes = Car.objects.values('make').annotate(entries=Count('make'))
-    models = Car.objects.values('model').annotate(entries=Count('model'))
-
     form = FreeSearchCarForm
 
     if request.method == 'POST':
@@ -73,10 +71,12 @@ def pricing(request):
     return render(request, 'car_prices_tool/pricing.html')
 
 
+@login_required
 def no_results(request):
     return render(request, 'car_prices_tool/no_results.html')
 
 
+@login_required
 def go_premium(request):
     if request.method == 'GET':
         try:
@@ -170,9 +170,7 @@ def search(request):
     models = Car.objects.values('model').annotate(entries=Count('model'))
 
     form = SearchCarForm
-    form_class = SearchCarForm
 
-    success_url = reverse_lazy('search')
     try:
         user_rank = UserPremiumRank.objects.filter(user=request.user).values('rank').get()
     except UserPremiumRank.DoesNotExist:
@@ -272,22 +270,23 @@ def load_models(request):
     return render(request, 'car_prices_tool/models_dropdown_list_options.html', {'data': data})
 
 
+@login_required
 def results(request, context):
     make = context.get('make')
     state = context.get('state')
     model = context.get('model')
     offer_type = context.get('offer_type')
     mileage_less_more = context.get('mileage_less_more')
-    mileage = None if context.get('mileage') == '' else context.get('mileage')
+    mileage = context.get('mileage')
     production_year_less_more = context.get('production_year_less_more')
-    production_year = None if context.get('production_year') == '' else context.get('production_year')
+    production_year = context.get('production_year')
     price_less_more = context.get('price_less_more')
-    price = None if context.get('price') == '' else context.get('price')
+    price = context.get('price')
     price_currency = context.get('price_currency')
     engine_capacity_less_more = context.get('engine_capacity_less_more')
-    engine_capacity = None if context.get('engine_capacity') == '' else context.get('engine_capacity')
+    engine_capacity = context.get('engine_capacity')
     engine_power_less_more = context.get('engine_power_less_more')
-    engine_power = None if context.get('engine_power') == '' else context.get('engine_power')
+    engine_power = context.get('engine_power')
 
     filters = {}
 
@@ -295,7 +294,7 @@ def results(request, context):
     filters['model'] = model
 
     if state != 'both':
-        filters['offer_type'] = offer_type
+        filters['state'] = state
 
     if offer_type != 'all':
         filters['offer_type'] = offer_type
@@ -341,11 +340,10 @@ def results(request, context):
             filters['engine_capacity__gte'] = engine_capacity
         if engine_power_less_more == 'engine_power_equal':
             filters['engine_capacity'] = engine_capacity
-    print(filters)
+
     cars = Car.objects.filter(**filters)
 
     cars_amount = len(cars)
-    print(len(cars))
 
     if len(cars) == 0:
         return render(request, 'car_prices_tool/no_results.html')

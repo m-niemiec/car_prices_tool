@@ -1,8 +1,8 @@
-from car_prices_tool.models import Car, CarMake
+from car_prices_tool.models import Car
 from django.db.models import Count, Avg
 
 charts_base_colors = ["#25CCF7", "#FD7272", "#54a0ff", "#00d2d3", "#01a3a4"
-                                                                  "#1abc9c", "#2ecc71", "#3498db", "#9b59b6", "#34495e",
+                      "#1abc9c", "#2ecc71", "#3498db", "#9b59b6", "#34495e",
                       "#16a085", "#27ae60", "#2980b9", "#8e44ad", "#2c3e50",
                       "#f1c40f", "#e67e22", "#e74c3c", "#ecf0f1", "#95a5a6",
                       "#f39c12", "#d35400", "#c0392b", "#bdc3c7", "#7f8c8d",
@@ -14,9 +14,8 @@ charts_base_colors = ["#25CCF7", "#FD7272", "#54a0ff", "#00d2d3", "#01a3a4"
 charts_backgroung_colors = ["rgba(255, 99, 132, 0.5)", "rgba(255, 159, 64, 0.5)", "rgba(255, 205, 86, 0.5)",
                             "rgba(75, 192, 192, 0.5)", "rgba(54, 162, 235, 0.5)", "rgba(153, 102, 255, 0.5)",
                             "rgba(201, 203, 207, 0.5)", "rgba(255, 99, 132, 0.5)", "rgba(255, 159, 64, 0.5)",
-                            "rgba(255, 205, 86, 0.5)",
-                            "rgba(75, 192, 192, 0.5)", "rgba(54, 162, 235, 0.5)", "rgba(153, 102, 255, 0.5)",
-                            "rgba(201, 203, 207, 0.5)"]
+                            "rgba(255, 205, 86, 0.5)", "rgba(75, 192, 192, 0.5)", "rgba(54, 162, 235, 0.5)",
+                            "rgba(153, 102, 255, 0.5)", "rgba(201, 203, 207, 0.5)"]
 
 charts_border_colors = ["rgb(255, 99, 132)", "rgb(255,159,64)", "rgb(255, 205, 86)", "rgb(75, 192, 192)",
                         "rgb(54, 162, 235)", "rgb(153, 102, 255)", "rgb(201, 203, 207)", "rgb(255, 99, 132)",
@@ -32,6 +31,7 @@ def home_popularmakes_barchart():
         make_choices.append((make["make"]))
 
     make_amount = []
+
     for make in makes:
         make_amount.append(Car.objects.filter(make=make["make"]).count())
 
@@ -48,13 +48,13 @@ def home_popularmakes_barchart():
 
 def home_popularproductionyears_piechart():
     popular_years = []
-    years = Car.objects.values('production_year').annotate(count=Count('production_year')).order_by('count').reverse()[
-            :10]
+    years = Car.objects.values('production_year').annotate(count=Count('production_year')).order_by('count').reverse()[:10]
 
     for year in years:
         popular_years.append((year["production_year"]))
 
     popular_years_amount = []
+
     for year in years:
         popular_years_amount.append(Car.objects.filter(production_year=year["production_year"]).count())
 

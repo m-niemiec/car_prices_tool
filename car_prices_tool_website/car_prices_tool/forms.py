@@ -16,8 +16,10 @@ class FreeSearchCarForm(forms.Form):
     state.widget.attrs.update({'class': 'form-horizontal', 'type': 'radio'})
     models = Car.objects.values('model').distinct()
     model_choices = [('', '--- select model ---')]
+
     for model in models:
         model_choices.append((model["model"], f'{model["model"]} ({Car.objects.filter(model=model["model"]).count()})'))
+
     model = forms.ChoiceField(choices=model_choices)
     model.widget.attrs.update({'class': 'form-select'})
 
@@ -34,21 +36,14 @@ class SearchCarForm(forms.Form):
     state_choices = [('Used', 'Used'), ('New', 'New'), ('both', 'Both')]
     state = forms.ChoiceField(choices=state_choices, widget=forms.RadioSelect, initial='Used')
     state.widget.attrs.update({'class': 'form-horizontal', 'type': 'radio'})
-    # Model:
-    # model_choices = []
     models = Car.objects.values('model').distinct()
-    # for model in models:
-    #     model_choices.append((model["model"], f'{model["model"]} ({Car.objects.filter(model=model["model"]).count()})'))
-    # model = forms.ChoiceField(choices=model_choices)
+    model_choices = [('', '<-- please select make <--')]
 
-    model_choices = [('', '--- select model ---')]
     for model in models:
         model_choices.append((model["model"], f'{model["model"]} ({Car.objects.filter(model=model["model"]).count()})'))
+
     model = forms.ChoiceField(choices=model_choices)
     model.widget.attrs.update({'class': 'form-select'})
-    # def __init__(self, *args, **kwargs):
-    #     super().__init__(*args, **kwargs)
-    #     self.fields['model'].queryset = CarMake.objects.none()
 
     # Offer type:
     offer_type_choices = [('all', 'All'),
@@ -62,7 +57,6 @@ class SearchCarForm(forms.Form):
                                  ('mileage_more_than', 'Mileage equal or more than:')]
     mileage_less_more = forms.ChoiceField(choices=mileage_less_more_choices, required=False)
     mileage_less_more.widget.attrs.update({'class': 'form-select'})
-
     mileage = forms.IntegerField(required=False)
     mileage.widget.attrs.update({'class': 'form-control', 'placeholder': '(e.q. 75000) in KMs'})
 
