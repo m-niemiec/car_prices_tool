@@ -13,8 +13,6 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 import os
 from pathlib import Path
 
-# SILENCED_SYSTEM_CHECKS = ['admin', 'async_support', 'caches', 'compatibility', 'database', 'models', 'security', 'signals', 'staticfiles', 'templates', 'translation', 'urls', ]
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -41,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'car_prices_tool',
-    'chartjs',
     'debug_toolbar'
 ]
 

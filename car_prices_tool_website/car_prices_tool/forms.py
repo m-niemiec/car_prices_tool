@@ -15,7 +15,7 @@ class FreeSearchCarForm(forms.Form):
     state = forms.ChoiceField(choices=state_choices, widget=forms.RadioSelect, initial='Used')
     state.widget.attrs.update({'class': 'form-horizontal', 'type': 'radio'})
     models = Car.objects.values('model').distinct()
-    model_choices = [('', '--- select model ---')]
+    model_choices = [('', '<-- please select make <--')]
 
     for model in models:
         model_choices.append((model["model"], f'{model["model"]} ({Car.objects.filter(model=model["model"]).count()})'))

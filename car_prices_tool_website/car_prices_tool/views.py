@@ -9,7 +9,6 @@ from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.db.models import Count, Avg
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
 
 from car_prices_tool import all_jscharts
 from car_prices_tool.forms import SearchCarForm, FreeSearchCarForm
@@ -36,15 +35,8 @@ def home(request):
 
             return results_demo(request, context)
     else:
-        cars = Car.objects.filter()
-        cars_below = Car.objects.filter(mileage__lte=150000)
-        cars_below_2 = Car.objects.filter(price__lte=150000)
-
         context = {
             'form': form,
-            'cars': cars,
-            'cars_below': cars_below,
-            'cars_below_2': cars_below_2,
             'home_popularmakes_barchart': all_jscharts.home_popularmakes_barchart(),
             'home_popularproductionyears_piechart': all_jscharts.home_popularproductionyears_piechart(),
             'home_average_cars_used_info_radarchart': all_jscharts.home_average_cars_used_info_radarchart()

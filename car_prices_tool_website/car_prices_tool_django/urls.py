@@ -38,7 +38,7 @@ urlpatterns = [
     path('logout', views.log_out_user, name='logout'),
 
     # Ajax:
-    path('ajax/load-cities/', views.load_models, name='ajax_load_models'),
+    path('ajax/load_models/', views.load_models, name='ajax_load_models'),
 
     path(r'^__debug__', include(debug_toolbar.urls))
 ]
