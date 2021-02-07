@@ -293,9 +293,11 @@ def results(request, context):
 
     filters['make'] = make
     filters['model'] = model
-    filters['state'] = state
 
-    if offer_type:
+    if state != 'both':
+        filters['offer_type'] = offer_type
+
+    if offer_type != 'all':
         filters['offer_type'] = offer_type
 
     if mileage:
@@ -339,7 +341,7 @@ def results(request, context):
             filters['engine_capacity__gte'] = engine_capacity
         if engine_power_less_more == 'engine_power_equal':
             filters['engine_capacity'] = engine_capacity
-
+    print(filters)
     cars = Car.objects.filter(**filters)
 
     cars_amount = len(cars)
