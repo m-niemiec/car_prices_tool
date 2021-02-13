@@ -22,12 +22,11 @@
                         </div>
                     </h1>
                 {% endif %}
-
-                <p class="lead">
-                    Hello! If you would like to purchase premium status for your account please click here:
-                </p>
                 <br><br>
                 {% if user_rank_name == 'Free' %}
+                    <p class="lead">
+                        Hello! If you would like to purchase premium status for your account please click here:
+                    </p>
                     <form action="{% url 'go_premium' %}" method="post">
                         {% csrf_token %}
                         <div style="text-align: center;">

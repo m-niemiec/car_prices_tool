@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'car_prices_tool',
+    'api',
+    'rest_framework',
     'debug_toolbar'
 ]
 

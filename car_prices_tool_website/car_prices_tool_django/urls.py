@@ -13,10 +13,13 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+import debug_toolbar
+import api
+from api import urls
 from django.contrib import admin
 from django.urls import path, include
 from car_prices_tool import views
-import debug_toolbar
+
 
 urlpatterns = [
     # Admin:
@@ -36,6 +39,9 @@ urlpatterns = [
     path('signup', views.sign_up_user, name='signup'),
     path('login', views.log_in_user, name='login'),
     path('logout', views.log_out_user, name='logout'),
+
+    # API:
+    path('api/', include(api.urls)),
 
     # Ajax:
     path('ajax/load_models/', views.load_models, name='ajax_load_models'),
