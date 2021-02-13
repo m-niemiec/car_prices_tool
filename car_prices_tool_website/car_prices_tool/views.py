@@ -34,6 +34,12 @@ def home(request):
             }
 
             return results_demo(request, context)
+        else:
+            context = {
+                'form': filled_form,
+            }
+
+            return render(request, 'car_prices_tool/home.html', context)
     else:
         context = {
             'form': form,

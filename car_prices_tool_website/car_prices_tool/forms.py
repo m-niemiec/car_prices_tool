@@ -16,11 +16,11 @@ class FreeSearchCarForm(forms.Form):
     state_choices = [('Used', 'Used'), ('New', 'New'), ('both', 'Both')]
     state = forms.ChoiceField(choices=state_choices, widget=forms.RadioSelect, initial='Used')
     state.widget.attrs.update({'class': 'form-horizontal', 'type': 'radio'})
-    # models = Car.objects.values('model').annotate(count=Count('model')).order_by('count').distinct().reverse()
+    models = Car.objects.values('model').annotate(count=Count('model')).order_by('count').distinct().reverse()
     model_choices = [('', '<-- please select make <--')]
 
-    # for model in models:
-    #     model_choices.append((model["model"], f'{model["model"]} ({Car.objects.filter(model=model["model"]).count()})'))
+    for model in models:
+        model_choices.append((model["model"], f'{model["model"]} ({Car.objects.filter(model=model["model"]).count()})'))
 
     model = forms.ChoiceField(choices=model_choices)
     model.widget.attrs.update({'class': 'form-select'})
@@ -38,11 +38,11 @@ class SearchCarForm(forms.Form):
     state_choices = [('Used', 'Used'), ('New', 'New'), ('both', 'Both')]
     state = forms.ChoiceField(choices=state_choices, widget=forms.RadioSelect, initial='Used')
     state.widget.attrs.update({'class': 'form-horizontal', 'type': 'radio'})
-    # models = Car.objects.values('model').annotate(count=Count('model')).order_by('count').distinct().reverse()
+    models = Car.objects.values('model').annotate(count=Count('model')).order_by('count').distinct().reverse()
     model_choices = [('', '<-- please select make <--')]
 
-    # for model in models:
-    #     model_choices.append((model["model"], f'{model["model"]} ({Car.objects.filter(model=model["model"]).count()})'))
+    for model in models:
+        model_choices.append((model["model"], f'{model["model"]} ({Car.objects.filter(model=model["model"]).count()})'))
 
     model = forms.ChoiceField(choices=model_choices)
     model.widget.attrs.update({'class': 'form-select'})
