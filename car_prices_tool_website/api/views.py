@@ -1,8 +1,33 @@
-import pendulum
 from datetime import date
+from django.contrib.auth.models import User
+from django.db import IntegrityError
 from rest_framework import generics, permissions
 from .serializers import CarSerializer
 from car_prices_tool.models import UserPremiumRank, UserSearchQuery, Car
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.parsers import JSONParser
+from django.http import JsonResponse
+
+
+@csrf_exempt
+def sign_up_user(request):
+    if request.method == 'POST':
+        try:
+            data = JSONParser().parse(request)
+            user = User.objects.create_user(username=data['username'], password=data['password'])
+            user.save()
+
+            context = {
+                'token': '123'
+            }
+
+            return JsonResponse(context, status=201)
+        except IntegrityError:
+            context = {
+                'error': 'This username is already taken. Please choose another one.'
+            }
+
+            return JsonResponse(context, status=400)
 
 
 class CarsResults(generics.ListAPIView):
@@ -52,3 +77,11 @@ class CarCreate(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save()
+
+
+class CarRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = CarSerializer
+    permission_classes = [permissions.IsAdminUser]
+
+    def get_queryset(self):
+        return Car.objects
