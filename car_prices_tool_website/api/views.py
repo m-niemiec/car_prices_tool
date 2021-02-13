@@ -76,6 +76,22 @@ class CarsResults(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
 
+        make = self.request.query_params.get('make')
+        state = self.request.query_params.get('state')
+        model = self.request.query_params.get('model')
+        offer_type = self.request.query_params.get('offer_type')
+        mileage_less_more = self.request.query_params.get('mileage_less_more')
+        mileage = self.request.query_params.get('mileage')
+        production_year_less_more = self.request.query_params.get('production_year_less_more')
+        production_year = self.request.query_params.get('production_year')
+        price_less_more = self.request.query_params.get('price_less_more')
+        price = self.request.query_params.get('price')
+        price_currency = self.request.query_params.get('price_currency')
+        engine_capacity_less_more = self.request.query_params.get('engine_capacity_less_more')
+        engine_capacity = self.request.query_params.get('engine_capacity')
+        engine_power_less_more = self.request.query_params.get('engine_power_less_more')
+        engine_power = self.request.query_params.get('engine_power')
+
         try:
             user_rank = UserPremiumRank.objects.filter(user=user).values('rank').get()
         except UserPremiumRank.DoesNotExist:
@@ -92,7 +108,66 @@ class CarsResults(generics.ListAPIView):
                 new_search = UserSearchQuery(user=user, search_parameters=filters)
                 new_search.save()
 
-                return Car.objects.filter(**filters)[:30]
+                filters = {}
+                print(make)
+
+                if make:
+                    filters['make'] = make
+
+                if model:
+                    filters['model'] = model
+
+                if state:
+                    filters['state'] = state
+
+                if offer_type:
+                    filters['offer_type'] = offer_type
+
+                if mileage:
+                    if mileage_less_more == 'mileage_less_than':
+                        filters['mileage__lte'] = mileage
+                    if mileage_less_more == 'mileage_more_than':
+                        filters['mileage__gte'] = mileage
+
+                if production_year:
+                    if production_year_less_more == 'production_year_less_than':
+                        filters['production_year__lte'] = production_year
+                    if production_year_less_more == 'production_year_more_than':
+                        filters['production_year__gte'] = production_year
+                    if production_year_less_more == 'production_year_exact':
+                        filters['production_year'] = production_year
+
+                if price:
+                    if price_currency != 'USD':
+                        if price_currency == 'PLN':
+                            price = price * 0.27
+                        if price_currency == 'EUR':
+                            price = price * 1.21
+
+                    if price_less_more == 'price_less_than':
+                        filters['price_dollars__lte'] = price
+                    if price_less_more == 'price_more_than':
+                        filters['price_dollars__gte'] = price
+
+                if engine_capacity:
+                    if engine_capacity_less_more == 'engine_capacity_less_than':
+                        filters['engine_power__lte'] = engine_power
+                    if engine_capacity_less_more == 'engine_capacity_more_than':
+                        filters['engine_power__gte'] = engine_power
+                    if engine_capacity_less_more == 'engine_capacity_equal':
+                        filters['engine_power'] = engine_power
+
+                if engine_power:
+                    if engine_power_less_more == 'engine_power_less_than':
+                        filters['engine_capacity__lte'] = engine_capacity
+                    if engine_power_less_more == 'engine_power_more_than':
+                        filters['engine_capacity__gte'] = engine_capacity
+                    if engine_power_less_more == 'engine_power_equal':
+                        filters['engine_capacity'] = engine_capacity
+
+                print(Car.objects.filter(**filters)[:100])
+                print(filters)
+                return Car.objects.filter(**filters)[:100]
             else:
                 context = {
                     'error': 'No searches left for today!'

@@ -1,5 +1,6 @@
 {% extends 'car_prices_tool/base.html' %}
 {% load static %}
+{% load math_templatetags %}
 
 {% block content %}
 
@@ -43,7 +44,7 @@
                                     <div class="progress-bar progress-bar-striped progress-bar-animated"
                                          role="progressbar"
                                          aria-valuenow="{{ available_searches }}" aria-valuemin="0" aria-valuemax="100"
-                                         style="width: {{ available_searches }}%"></div>
+                                         style="width: {% multiply available_searches 0.2 %}%"></div>
                                 </div>
                             {% else %}
                                 <div class="alert alert-danger" role="alert">
@@ -59,7 +60,7 @@
                                     <div class="progress-bar progress-bar-striped progress-bar-animated"
                                          role="progressbar"
                                          aria-valuenow="{{ available_searches }}" aria-valuemin="0" aria-valuemax="10"
-                                         style="width: {{ available_searches_multiplied }}%"></div>
+                                         style="width: {% multiply available_searches 10 %}%"></div>
                                 </div>
                             {% else %}
                                 <div class="alert alert-danger" role="alert">

@@ -224,7 +224,6 @@ def search(request):
     else:
         available_searches = free_searches - last_user_searches
 
-    available_searches_multiplied = available_searches * 10
     searches_multiplied = last_user_searches * 10
 
     if request.method == 'POST':
@@ -289,8 +288,7 @@ def search(request):
                 'last_user_searches': last_user_searches,
                 'user_rank': user_rank,
                 'searches_multiplied': searches_multiplied,
-                'available_searches': available_searches,
-                'available_searches_multiplied': available_searches_multiplied
+                'available_searches': available_searches
             }
 
             return render(request, 'car_prices_tool/search.html', context)
@@ -306,7 +304,6 @@ def search(request):
         'last_user_searches': last_user_searches,
         'searches_multiplied': searches_multiplied,
         'available_searches': available_searches,
-        'available_searches_multiplied': available_searches_multiplied,
         'user_rank': user_rank
     }
 
