@@ -11,6 +11,8 @@ def add_variable_to_context(request):
 
         if user_rank_name.get('rank') == 'Premium':
             user_rank_name = 'Premium'
+        elif user_rank_name.get('rank') == 'APIPRO':
+            user_rank_name = 'API Pro'
         if not user_rank_name:
             user_rank_name = 'Free'
 

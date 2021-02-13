@@ -50,6 +50,14 @@
                         <a class="btn btn-success" href="{% url 'go_premium' %}" role="button">Go Premium!</a>
                     {% endif %}
 
+                    {% if user_rank_name == 'Free' or user_rank_name == 'Premium' %}
+                        <a class="btn btn-success" href="{% url 'go_api_pro' %}" role="button">Go API Pro!</a>
+                    {% endif %}
+
+                    {% if user_rank_name == 'API Pro' %}
+                        <a class="btn btn-success" href="{% url 'go_api_pro' %}" role="button">Get your Token!</a>
+                    {% endif %}
+
                     <form action="{% url 'logout' %}" method="post">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-outline-danger">Logout</button>

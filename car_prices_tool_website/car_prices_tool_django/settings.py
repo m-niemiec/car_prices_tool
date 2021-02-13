@@ -41,8 +41,16 @@ INSTALLED_APPS = [
     'car_prices_tool',
     'api',
     'rest_framework',
+    'rest_framework.authtoken',
     'debug_toolbar'
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication'
+    ]
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

@@ -14,6 +14,8 @@ from car_prices_tool import all_jscharts
 from car_prices_tool.forms import SearchCarForm, FreeSearchCarForm
 from car_prices_tool.models import Car, UserSearchQuery, UserPremiumRank
 
+from rest_framework.authtoken.models import Token
+
 
 register = template.Library()
 
@@ -84,7 +86,7 @@ def go_premium(request):
 
         if user_rank_name.get('rank') == 'Premium':
             context = {
-                'message': 'It seems that you already have Premium account. Thank you!'
+                'message': 'You already have Premium account. Thank you!'
             }
 
             return render(request, 'car_prices_tool/go_premium.html', context)
@@ -99,6 +101,40 @@ def go_premium(request):
         }
 
         return render(request, 'car_prices_tool/go_premium.html', context)
+
+
+@login_required
+def go_api_pro(request):
+    if request.method == 'GET':
+        try:
+            user_rank_name = UserPremiumRank.objects.filter(user=request.user).values('rank').get()
+        except UserPremiumRank.DoesNotExist:
+            user_rank_name = {}
+
+        if user_rank_name.get('rank') == 'APIPRO':
+            token = Token.objects.get(user=request.user)
+
+            context = {
+                'message': 'You already have API Pro account. Thank you!',
+                'token': str(token)
+            }
+
+            return render(request, 'car_prices_tool/go_api_pro.html', context)
+        else:
+            return render(request, 'car_prices_tool/go_api_pro.html')
+    else:
+        UserPremiumRank.objects.filter(user=request.user).all().delete()
+        get_api_pro = UserPremiumRank(user=request.user, rank='APIPRO')
+        get_api_pro.save()
+
+        token = Token.objects.create(user=request.user)
+
+        context = {
+            'message': 'Thank you very much for supporting our website! Enjoy your API Pro account!',
+            'token': str(token)
+        }
+
+        return render(request, 'car_prices_tool/go_api_pro.html', context)
 
 
 def sign_up_user(request):
