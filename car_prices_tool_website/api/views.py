@@ -4,8 +4,6 @@ from django.contrib.auth.models import User
 from django.db import IntegrityError
 from rest_framework import generics, permissions
 from rest_framework.exceptions import ValidationError
-from rest_framework.response import Response
-
 from .serializers import CarSerializer
 from car_prices_tool.models import UserPremiumRank, UserSearchQuery, Car
 from django.views.decorators.csrf import csrf_exempt

@@ -205,6 +205,10 @@ def search(request):
 
     form = SearchCarForm
 
+    free_searches = 10
+    premium_searches = 100
+    apipro_searches = 500
+
     try:
         user_rank = UserPremiumRank.objects.filter(user=request.user).values('rank').get()
     except UserPremiumRank.DoesNotExist:
@@ -214,9 +218,11 @@ def search(request):
     last_user_searches = UserSearchQuery.objects.filter(user=request.user, date__year=today.year, date__month=today.month, date__day=today.day).count()
 
     if user_rank.get('rank') == 'Premium':
-        available_searches = 100 - last_user_searches
+        available_searches = premium_searches - last_user_searches
+    elif user_rank.get('rank') == 'APIPRO':
+        available_searches = apipro_searches - last_user_searches
     else:
-        available_searches = 10 - last_user_searches
+        available_searches = free_searches - last_user_searches
 
     available_searches_multiplied = available_searches * 10
     searches_multiplied = last_user_searches * 10
@@ -242,7 +248,19 @@ def search(request):
                 'engine_power': filled_form.cleaned_data['engine_power']
             }
             if user_rank.get('rank') == 'Premium':
-                if last_user_searches < 100:
+                if last_user_searches < premium_searches:
+                    new_search = UserSearchQuery(user=request.user, search_parameters=context)
+                    new_search.save()
+
+                    return results(request, context)
+                else:
+                    context = {
+                        'quota_error': 'No searches left for today! Maybe go API Pro?'
+                    }
+
+                    return render(request, 'car_prices_tool/search.html', context)
+            elif user_rank.get('rank') == 'APIPRO':
+                if last_user_searches < apipro_searches:
                     new_search = UserSearchQuery(user=request.user, search_parameters=context)
                     new_search.save()
 
@@ -254,14 +272,14 @@ def search(request):
 
                     return render(request, 'car_prices_tool/search.html', context)
             else:
-                if last_user_searches < 10:
+                if last_user_searches < free_searches:
                     new_search = UserSearchQuery(user=request.user, search_parameters=context)
                     new_search.save()
 
                     return results(request, context)
                 else:
                     context = {
-                        'quota_error': 'No searches left for today!'
+                        'quota_error': 'No searches left for today! Please consider upgrading your account.'
                     }
 
                     return render(request, 'car_prices_tool/search.html', context)
@@ -278,6 +296,9 @@ def search(request):
             return render(request, 'car_prices_tool/search.html', context)
 
     context = {
+        'free_searches': free_searches,
+        'premium_searches': premium_searches,
+        'apipro_searches': apipro_searches,
         'cars': cars,
         'makes': makes,
         'models': models,

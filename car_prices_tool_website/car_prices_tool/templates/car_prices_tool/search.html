@@ -31,6 +31,22 @@
                                 </div>
                             {% else %}
                                 <div class="alert alert-danger" role="alert">
+                                    You exceeded your daily search quota. Please wait 24 hours or go API Pro!
+                                </div>
+                            {% endif %}
+                        {% endif %}
+
+                        {% if user_rank.rank == 'APIPRO' %}
+                            {% if last_user_searches < 500 %}
+                                <h6>Available searches today: {{ available_searches }} <br>Your rank is API Pro!</h6>
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-striped progress-bar-animated"
+                                         role="progressbar"
+                                         aria-valuenow="{{ available_searches }}" aria-valuemin="0" aria-valuemax="100"
+                                         style="width: {{ available_searches }}%"></div>
+                                </div>
+                            {% else %}
+                                <div class="alert alert-danger" role="alert">
                                     You exceeded your daily search quota. Please wait 24 hours.
                                 </div>
                             {% endif %}
