@@ -180,7 +180,7 @@ class CarsResults(generics.ListAPIView):
                     if engine_power_less_more == 'engine_power_equal':
                         filters['engine_power'] = engine_power
 
-                return Car.objects.filter(**filters)[:300]
+                return Car.objects.filter(**filters)[:500]
             else:
                 context = {
                     'error': 'No searches left for today!'
