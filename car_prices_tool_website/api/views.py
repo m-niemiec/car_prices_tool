@@ -10,6 +10,21 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
 from django.http import JsonResponse
 from rest_framework.authtoken.models import Token
+from rest_framework.authentication import TokenAuthentication
+
+
+class TokenAuthSupportQueryString(TokenAuthentication):
+    """
+    Extend the TokenAuthentication class to support querystring authentication
+    in the form of "http://www.example.com/?auth_token=<token_key>"
+    """
+    def authenticate(self, request):
+        # Check if 'token_auth' is in the request query params.
+        # Give precedence to 'Authorization' header.
+        if 'auth_token' in request.query_params and 'HTTP_AUTHORIZATION' not in request.META:
+            return self.authenticate_credentials(request.query_params.get('auth_token'))
+        else:
+            return super(TokenAuthSupportQueryString, self).authenticate(request)
 
 
 @csrf_exempt
@@ -72,6 +87,7 @@ def get_token(request):
 class CarsResults(generics.ListAPIView):
     serializer_class = CarSerializer
     permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = (TokenAuthSupportQueryString,)
 
     def get_queryset(self):
         user = self.request.user
@@ -109,7 +125,6 @@ class CarsResults(generics.ListAPIView):
                 new_search.save()
 
                 filters = {}
-                print(make)
 
                 if make:
                     filters['make'] = make
@@ -165,9 +180,7 @@ class CarsResults(generics.ListAPIView):
                     if engine_power_less_more == 'engine_power_equal':
                         filters['engine_capacity'] = engine_capacity
 
-                print(Car.objects.filter(**filters)[:100])
-                print(filters)
-                return Car.objects.filter(**filters)[:100]
+                return Car.objects.filter(**filters)[:300]
             else:
                 context = {
                     'error': 'No searches left for today!'
