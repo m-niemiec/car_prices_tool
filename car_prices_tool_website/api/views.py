@@ -166,19 +166,19 @@ class CarsResults(generics.ListAPIView):
 
                 if engine_capacity:
                     if engine_capacity_less_more == 'engine_capacity_less_than':
-                        filters['engine_power__lte'] = engine_power
+                        filters['engine_capacity__lte'] = engine_capacity
                     if engine_capacity_less_more == 'engine_capacity_more_than':
-                        filters['engine_power__gte'] = engine_power
+                        filters['engine_capacity__gte'] = engine_capacity
                     if engine_capacity_less_more == 'engine_capacity_equal':
-                        filters['engine_power'] = engine_power
+                        filters['engine_capacity'] = engine_capacity
 
                 if engine_power:
                     if engine_power_less_more == 'engine_power_less_than':
-                        filters['engine_capacity__lte'] = engine_capacity
+                        filters['engine_power__lte'] = engine_power
                     if engine_power_less_more == 'engine_power_more_than':
-                        filters['engine_capacity__gte'] = engine_capacity
+                        filters['engine_power__gte'] = engine_power
                     if engine_power_less_more == 'engine_power_equal':
-                        filters['engine_capacity'] = engine_capacity
+                        filters['engine_power'] = engine_power
 
                 return Car.objects.filter(**filters)[:300]
             else:

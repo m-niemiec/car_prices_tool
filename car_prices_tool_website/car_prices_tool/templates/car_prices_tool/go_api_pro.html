@@ -35,10 +35,13 @@
                         </div>
                     </form>
                 {% else %}
-                    <p class="lead">
-                        Here is your own API Key / Token:<br>
-                        {{ token }}
-                    </p>
+                    <div style="text-align: center;">
+                        <p class="lead">
+                            Here is your own API Key / Token:<br>
+                            {{ token }}<br><br>
+                            <a href="{% url 'api_documentation' %}">Read API Documentation</a>
+                        </p>
+                    </div>
                 {% endif %}
             </div>
         </div>

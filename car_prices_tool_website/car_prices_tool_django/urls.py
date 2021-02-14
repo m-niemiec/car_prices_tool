@@ -35,6 +35,7 @@ urlpatterns = [
     path('no_results', views.no_results, name='no_results'),
     path('go_premium', views.go_premium, name='go_premium'),
     path('go_api_pro', views.go_api_pro, name='go_api_pro'),
+    path('api_documentation', views.api_documentation, name='api_documentation'),
 
     # Authorization:
     path('signup', views.sign_up_user, name='signup'),
