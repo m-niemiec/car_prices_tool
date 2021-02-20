@@ -1,6 +1,7 @@
 from car_prices_tool.models import Car
 from django.db.models import Count, Avg
 
+# Prepared colors for using with charts below.
 charts_base_colors = ["#25CCF7", "#FD7272", "#54a0ff", "#00d2d3", "#01a3a4"
                       "#1abc9c", "#2ecc71", "#3498db", "#9b59b6", "#34495e",
                       "#16a085", "#27ae60", "#2980b9", "#8e44ad", "#2c3e50",
@@ -23,6 +24,7 @@ charts_border_colors = ["rgb(255, 99, 132)", "rgb(255,159,64)", "rgb(255, 205, 8
                         "rgb(54, 162, 235)", "rgb(153, 102, 255)", "rgb(201, 203, 207)"]
 
 
+# Bar chart with most popular makes on home page.
 def home_popularmakes_barchart():
     make_choices = []
     makes = Car.objects.values('make').annotate(count=Count('make')).order_by('count').reverse()[:15]
@@ -46,6 +48,7 @@ def home_popularmakes_barchart():
     return context
 
 
+# Pie chart with most popular production years on home page.
 def home_popularproductionyears_piechart():
     popular_years = []
     years = Car.objects.values('production_year').annotate(count=Count('production_year')).order_by('count').reverse()[:10]
@@ -69,6 +72,7 @@ def home_popularproductionyears_piechart():
     return context
 
 
+# Radar chart with average information of used cars on home page.
 def home_average_cars_used_info_radarchart():
     makes = Car.objects.values('make').annotate(count=Count('make')).order_by('count').reverse()[:8]
 

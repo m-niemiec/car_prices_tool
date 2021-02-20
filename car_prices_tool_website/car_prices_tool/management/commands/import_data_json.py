@@ -1,10 +1,18 @@
 import json
 import random
-from car_prices_tool.models import Car, CarMake
+from car_prices_tool.models import Car
 from django.core.management.base import BaseCommand
 
 
 class Command(BaseCommand):
+    """
+    This command was written to automate process of importing data from json file to django models.
+    Json file is being prepared by Scrapy spider with cars data. Each time this command is called,
+    old data is being deleted and new one is being imported. Additional field 'price_dollars' is
+    being added to make comparing cars with different price currencies easier.
+    You can call this command by writing 'python manage.py import_data_json'.
+    """
+
     def handle(self, **options):
         with open('car_prices_tool_django/file.json', 'r') as f:
             cars = json.load(f)
@@ -13,20 +21,13 @@ class Command(BaseCommand):
 
         # Delete all previous objects
         Car.objects.all().delete()
-        CarMake.objects.all().delete()
 
-        self.stdout.write(self.style.SUCCESS('Successfully deleted old CARS and CARMAKE models data!'))
+        self.stdout.write(self.style.SUCCESS('Successfully deleted old CARS models data!'))
 
-        self.stdout.write('Creating new CARS and CARMAKE models data...')
-
-        car_makes_list = []
+        self.stdout.write('Creating new CARS models data...')
 
         # Create a django model object for each object in JSON
         for car in cars:
-            if car['make'] not in car_makes_list:
-                car_makes_list.append(car['make'])
-                CarMake.objects.create(car_make=car['make'])
-
             if car['price_currency'] != 'USD':
                 if car['price_currency'] == 'PLN':
                     price_dollars = car['price'] * 0.27

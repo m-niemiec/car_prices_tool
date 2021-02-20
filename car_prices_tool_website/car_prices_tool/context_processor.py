@@ -2,6 +2,7 @@ from .models import UserPremiumRank, UserSearchQuery
 from datetime import date
 
 
+# Used for navbar.
 def add_variable_to_context(request):
     if request.user.is_authenticated:
         try:

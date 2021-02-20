@@ -19,10 +19,12 @@ from rest_framework.authtoken.models import Token
 
 register = template.Library()
 
+# Current rates of conversion.
 usd_pln = 3.73
 usd_eur = 0.82
 
 
+# Home is also a landing page.
 def home(request):
     form = FreeSearchCarForm
 
@@ -76,6 +78,7 @@ def api_documentation(request):
     return render(request, 'car_prices_tool/api_documentation.html')
 
 
+# This view is called when user search did not return any matches.
 @login_required
 def no_results(request):
     return render(request, 'car_prices_tool/no_results.html')
@@ -222,6 +225,7 @@ def search(request):
     today = date.today()
     last_user_searches = UserSearchQuery.objects.filter(user=request.user, date__year=today.year, date__month=today.month, date__day=today.day).count()
 
+    # Check how many searches user can make based on rank.
     if user_rank.get('rank') == 'Premium':
         available_searches = premium_searches - last_user_searches
     elif user_rank.get('rank') == 'APIPRO':
@@ -229,6 +233,7 @@ def search(request):
     else:
         available_searches = free_searches - last_user_searches
 
+    # Additional value for frontend.
     searches_multiplied = last_user_searches * 10
 
     if request.method == 'POST':
@@ -315,6 +320,7 @@ def search(request):
     return render(request, 'car_prices_tool/search.html', context)
 
 
+# This view is for AJAX call.
 def load_models(request):
     make = request.GET.get('make')
     models = Car.objects.values('model').filter(make=make).annotate(count=Count('make')).order_by('count').distinct().reverse()
@@ -398,10 +404,12 @@ def results(request, context):
         if engine_power_less_more == 'engine_power_equal':
             filters['engine_power'] = engine_power
 
+    # **filters combines all filters provided by user.
     cars = Car.objects.filter(**filters)
 
     cars_amount = len(cars)
 
+    # If filters provided by user did not return any matches call no_results.html
     if len(cars) == 0:
         return render(request, 'car_prices_tool/no_results.html')
 
@@ -413,10 +421,12 @@ def results(request, context):
     average_engine_power = int(cars.aggregate(Avg('engine_power'))['engine_power__avg'])
     average_engine_capacity = '{:.2f}'.format(cars.aggregate(Avg('engine_capacity'))['engine_capacity__avg'])
 
+    # Get 10 most popular model variants from given filters.
     popular_model_variants = cars.filter(model_variant__isnull=False).values('model_variant').annotate(count=Count('model_variant')).order_by('count').reverse()[:10]
 
     pmv_dict = {}
 
+    # Gather information about 10 most popular model variants.
     for pmv in popular_model_variants:
         pmv_dict[f'{pmv["model_variant"]}'] = []
         pmv_dict[f'{pmv["model_variant"]}'].append('{:.2f}'.format(cars.filter(model_variant=pmv["model_variant"]).aggregate(Avg('price_dollars'))['price_dollars__avg'] * usd_pln))
@@ -433,6 +443,7 @@ def results(request, context):
     pmv_info_dict_mileage = {}
 
     current_year = pendulum.now('UTC')
+    # Get last 10 years to compare data of popular model variants on time charts.
     period = pendulum.period(current_year.subtract(years=10), current_year)
     years_list = []
 
@@ -447,12 +458,14 @@ def results(request, context):
             if price:
                 pmv_info_dict_price[f'{pmv["model_variant"]}'].append(price)
             else:
+                # If there is no data available set 0 as a value.
                 pmv_info_dict_price[f'{pmv["model_variant"]}'].append(0)
 
             mileage = cars.filter(model_variant=pmv["model_variant"], production_year=year.year).aggregate(Avg('mileage'))['mileage__avg']
             if mileage:
                 pmv_info_dict_mileage[f'{pmv["model_variant"]}'].append(mileage)
             else:
+                # If there is no data available set 0 as a value.
                 pmv_info_dict_mileage[f'{pmv["model_variant"]}'].append(0)
 
     context = {
@@ -490,6 +503,7 @@ def results(request, context):
     return render(request, 'car_prices_tool/results.html', context)
 
 
+# Demo results are called after search from home page.
 def results_demo(request, context):
     make = context.get('make')
     state = context.get('state')
