@@ -85,10 +85,16 @@
                     });
                 </script>
             </div>
-            <br><br><br>
-            <p class="lead">If you are ready for <b>full</b> version, please <a href="{% url 'signup' %}" role="button">Create
-                Free Account Here!</a>
-
+            <br><br>
+            {% if not user.is_authenticated %}
+                <p class="lead">If you are ready for <b>full</b> version, please
+                    <a href="{% url 'signup' %}" role="button">Create Free Account Here!</a>
+                    {% else %}
+                <p class="lead">Go for <b>full</b> version
+                    <a href="{% url 'search' %}" role="button">here!</a></p>
+            {% endif %}
+        </div>
+    </div>
     </body>
     </html>
 
