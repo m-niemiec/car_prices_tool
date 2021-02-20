@@ -37,10 +37,10 @@ class TestModels(TestCase):
 
     def test_user_premium_rank(self):
         user = self.user
+
         premium_rank = UserPremiumRank.objects.create(
             user=user,
             rank='Premium'
         )
 
         assert premium_rank in UserPremiumRank.objects.all()
-
