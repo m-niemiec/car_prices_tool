@@ -6,7 +6,7 @@ from django.urls import reverse
 from mixer.backend.django import mixer
 
 
-@pytest.mark.django_db(transaction=True)
+@pytest.mark.django_db
 class TestViews:
     def test_home_view(self, client):
         url = reverse('home')
