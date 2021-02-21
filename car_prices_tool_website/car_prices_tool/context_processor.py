@@ -1,5 +1,6 @@
-from .models import UserPremiumRank, UserSearchQuery
 from datetime import date
+
+from .models import UserPremiumRank, UserSearchQuery
 
 
 # Used for navbar.

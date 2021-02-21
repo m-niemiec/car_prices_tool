@@ -23,7 +23,7 @@ from car_prices_tool import views
 
 urlpatterns = [
     # Admin:
-    path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls, name='admin'),
 
     # Templates:
     path('', views.home, name='home'),

@@ -14,11 +14,8 @@
     <div>
         <div class="form-group">
             <form method="post" id="SearchForm" data-models-url="{% url 'ajax_load_models' %}" novalidate>
-
                 {% csrf_token %}
-                <!--Main jumbotron with all content inside-->
                 <div class="jumbotron jumbotron-fluid vertical-center">
-                    <!--Main container-->
                     <div class="container">
                         <br>
                         {% if user_rank.rank == 'Premium' %}
@@ -214,12 +211,13 @@
                                 </div>
                                 <span style="font-size: 350%; ">&nbsp;&nbsp;●&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;●</span>
                             {% endif %}
-
+                        </div>
+                    </div>
+                </div>
             </form>
         </div>
     </div>
-    </div>
-
+    {#Ajax call for loading up models based on selected make.#}
     <script>
         $("#id_make").change(function () {
             const url = $("#SearchForm").attr("data-models-url");

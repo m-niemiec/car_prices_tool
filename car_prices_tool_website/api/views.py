@@ -1,16 +1,18 @@
 from datetime import date
+
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.db import IntegrityError
-from rest_framework import generics, permissions
-from rest_framework.exceptions import ValidationError
-from .serializers import CarSerializer
-from car_prices_tool.models import UserPremiumRank, UserSearchQuery, Car
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.parsers import JSONParser
 from django.http import JsonResponse
-from rest_framework.authtoken.models import Token
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework import generics, permissions
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.authtoken.models import Token
+from rest_framework.exceptions import ValidationError
+from rest_framework.parsers import JSONParser
+
+from car_prices_tool.models import UserPremiumRank, UserSearchQuery, Car
+from .serializers import CarSerializer
 
 
 class TokenAuthSupportQueryString(TokenAuthentication):
@@ -60,6 +62,7 @@ def get_token(request):
 
             return JsonResponse(context)
         else:
+            # Make sure that user have correct rank to get token.
             try:
                 user_rank = UserPremiumRank.objects.filter(user=user).values('rank').get()
             except UserPremiumRank.DoesNotExist:

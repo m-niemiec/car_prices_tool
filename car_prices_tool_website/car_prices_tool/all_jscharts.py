@@ -1,5 +1,6 @@
-from car_prices_tool.models import Car
 from django.db.models import Count, Avg
+
+from car_prices_tool.models import Car
 
 # Prepared colors for using with charts below.
 charts_base_colors = ["#25CCF7", "#FD7272", "#54a0ff", "#00d2d3", "#01a3a4"

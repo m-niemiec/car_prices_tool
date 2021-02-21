@@ -1,4 +1,5 @@
 import pytest
+
 from car_prices_tool.models import UserPremiumRank
 
 

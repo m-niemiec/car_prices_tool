@@ -9,13 +9,11 @@ from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.db.models import Count, Avg
 from django.shortcuts import render, redirect
+from rest_framework.authtoken.models import Token
 
 from car_prices_tool import all_jscharts
 from car_prices_tool.forms import SearchCarForm, FreeSearchCarForm
 from car_prices_tool.models import Car, UserSearchQuery, UserPremiumRank
-
-from rest_framework.authtoken.models import Token
-
 
 register = template.Library()
 

@@ -1,7 +1,9 @@
 import json
 import random
-from car_prices_tool.models import Car
+
 from django.core.management.base import BaseCommand
+
+from car_prices_tool.models import Car
 
 
 class Command(BaseCommand):

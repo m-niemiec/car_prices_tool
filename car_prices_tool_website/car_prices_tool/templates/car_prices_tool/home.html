@@ -13,7 +13,6 @@
     <div class="jumbotron jumbotron-fluid vertical-center">
         <div class="container">
             <h1 class="display-4">Welcome on Car Prices Tool website!</h1>
-
             <p class="lead">
                 Hi! Aren't you tired with searching for prices and comparisons of cars that you are interest in?
                 Looking for best price/mileage/production year proportions?
@@ -66,7 +65,7 @@
                         </div>
                     </div>
                 </form>
-
+                {#Ajax call for loading up models based on selected make.#}
                 <script>
                     $("#id_make").change(function () {
                         const url = $("#SearchForm").attr("data-models-url");

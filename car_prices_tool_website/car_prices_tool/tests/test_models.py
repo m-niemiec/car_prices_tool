@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.test import TestCase
+
 from car_prices_tool.models import Car, UserPremiumRank
 
 
