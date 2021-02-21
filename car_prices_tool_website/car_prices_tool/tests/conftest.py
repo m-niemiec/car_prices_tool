@@ -21,3 +21,8 @@ def auto_login_user(db, client, create_user):
         return client, user
 
     return make_auto_login
+
+
+@pytest.fixture(autouse=True)
+def enable_db_access_for_all_tests(db):
+    pass

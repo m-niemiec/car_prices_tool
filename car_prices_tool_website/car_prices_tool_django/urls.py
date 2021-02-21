@@ -27,20 +27,21 @@ urlpatterns = [
 
     # Templates:
     path('', views.home, name='home'),
-    path('about', views.about, name='about'),
-    path('features', views.features, name='features'),
-    path('pricing', views.pricing, name='pricing'),
-    path('search', views.search, name='search'),
-    path('results', views.results, name='results'),
-    path('no_results', views.no_results, name='no_results'),
-    path('go_premium', views.go_premium, name='go_premium'),
-    path('go_api_pro', views.go_api_pro, name='go_api_pro'),
-    path('api_documentation', views.api_documentation, name='api_documentation'),
+    path('about/', views.about, name='about'),
+    path('features/', views.features, name='features'),
+    path('pricing/', views.pricing, name='pricing'),
+    path('search/', views.search, name='search'),
+    path('results/', views.results, name='results'),
+    path('results_demo/', views.results_demo, name='results_demo'),
+    path('no_results/', views.no_results, name='no_results'),
+    path('go_premium/', views.go_premium, name='go_premium'),
+    path('go_api_pro/', views.go_api_pro, name='go_api_pro'),
+    path('api_documentation/', views.api_documentation, name='api_documentation'),
 
     # Authorization:
-    path('signup', views.sign_up_user, name='signup'),
-    path('login', views.log_in_user, name='login'),
-    path('logout', views.log_out_user, name='logout'),
+    path('signup/', views.sign_up_user, name='signup'),
+    path('login/', views.log_in_user, name='login'),
+    path('logout/', views.log_out_user, name='logout'),
 
     # API:
     path('api/', include(api.urls)),

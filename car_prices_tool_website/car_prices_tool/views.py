@@ -73,18 +73,18 @@ def pricing(request):
     return render(request, 'car_prices_tool/pricing.html')
 
 
-@login_required
+@login_required(login_url='login')
 def api_documentation(request):
     return render(request, 'car_prices_tool/api_documentation.html')
 
 
 # This view is called when user search did not return any matches.
-@login_required
+@login_required(login_url='login')
 def no_results(request):
     return render(request, 'car_prices_tool/no_results.html')
 
 
-@login_required
+@login_required(login_url='login')
 def go_premium(request):
     if request.method == 'GET':
         try:
@@ -111,7 +111,7 @@ def go_premium(request):
         return render(request, 'car_prices_tool/go_premium.html', context)
 
 
-@login_required
+@login_required(login_url='login')
 def go_api_pro(request):
     if request.method == 'GET':
         try:
@@ -205,7 +205,7 @@ def log_out_user(request):
         return render(request, 'car_prices_tool/home.html')
 
 
-@login_required
+@login_required(login_url='login')
 def search(request):
     cars = Car.objects.all()
     makes = Car.objects.values('make').annotate(entries=Count('make'))
@@ -333,7 +333,7 @@ def load_models(request):
     return render(request, 'car_prices_tool/models_dropdown_list_options.html', {'data': data})
 
 
-@login_required
+@login_required(login_url='login')
 def results(request, context):
     make = context.get('make')
     state = context.get('state')
@@ -513,7 +513,13 @@ def results_demo(request, context):
 
     cars_amount = cars.count()
 
-    average_price = '{:.2f}'.format(cars.aggregate(Avg('price'))['price__avg'])
+    # If filters provided by user did not return any matches call no_results.html
+    if len(cars) == 0:
+        return render(request, 'car_prices_tool/no_results.html')
+
+    average_price_usd = '{:.2f}'.format(cars.aggregate(Avg('price_dollars'))['price_dollars__avg'])
+    average_price_pln = '{:.2f}'.format(cars.aggregate(Avg('price_dollars'))['price_dollars__avg'] * usd_pln)
+    average_price_eur = '{:.2f}'.format(cars.aggregate(Avg('price_dollars'))['price_dollars__avg'] * usd_eur)
     average_mileage = '{:.2f}'.format(cars.aggregate(Avg('mileage'))['mileage__avg'])
     average_production_year = int(cars.aggregate(Avg('production_year'))['production_year__avg'])
     average_engine_power = int(cars.aggregate(Avg('engine_power'))['engine_power__avg'])
@@ -534,7 +540,9 @@ def results_demo(request, context):
 
     context = {
         'cars_amount': cars_amount,
-        'average_price': average_price,
+        'average_price_usd': average_price_usd,
+        'average_price_pln': average_price_pln,
+        'average_price_eur': average_price_eur,
         'average_mileage': average_mileage,
         'average_production_year': average_production_year,
         'average_engine_power': average_engine_power,
