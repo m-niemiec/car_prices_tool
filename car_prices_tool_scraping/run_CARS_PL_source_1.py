@@ -1,6 +1,8 @@
 import os
+
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
+
 from car_prices_tool_scrapy.spiders.CARS_PL_source_1 import CARSPLsource1Spider
 
 

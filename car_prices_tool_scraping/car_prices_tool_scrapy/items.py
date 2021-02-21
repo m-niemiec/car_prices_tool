@@ -1,6 +1,7 @@
 import re
+
 import scrapy
-from itemloaders.processors import Join, MapCompose, TakeFirst
+from itemloaders.processors import Join, MapCompose
 
 
 def clean_item(item):

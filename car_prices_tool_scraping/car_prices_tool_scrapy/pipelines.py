@@ -1,4 +1,3 @@
-import os
 from itemadapter import ItemAdapter
 from scrapy.exceptions import DropItem
 from scrapy.exporters import JsonItemExporter

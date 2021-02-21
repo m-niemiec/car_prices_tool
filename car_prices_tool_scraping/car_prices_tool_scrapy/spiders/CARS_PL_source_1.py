@@ -1,11 +1,13 @@
-import sys
-import re
-import os
-import json
 import inspect
+import json
+import os
+import re
+import sys
+
 import pendulum
 from scrapy import spiders
 from scrapy.loader import ItemLoader
+
 current_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parent_dir = os.path.dirname(current_dir)
 sys.path.insert(0, parent_dir)
