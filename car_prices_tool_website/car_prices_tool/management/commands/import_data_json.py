@@ -16,7 +16,14 @@ class Command(BaseCommand):
     You can call this command by writing 'python manage.py import_data_json'.
     """
 
+    mode = 'test'
+
     def handle(self, **options):
+        if not self.mode:
+            self.stdout.write(self.style.WARNING('Please provide "mode" as "full" ot "test" to determine how much '
+                                                 'data you want to import.'))
+            return
+
         with open('car_prices_tool_django/file.json', 'r') as f:
             cars = json.load(f)
 
@@ -31,30 +38,37 @@ class Command(BaseCommand):
 
         # Create a django model object for each object in JSON
         for car in cars:
-            if car['price_currency'] != 'USD':
-                if car['price_currency'] == 'PLN':
-                    price_dollars = car['price'] * 0.27
-                if car['price_currency'] == 'EUR':
-                    price_dollars = car['price'] * 1.21
-            else:
-                price_dollars = car['price']
+            if self.mode == 'full':
+                self.create_car_object(car)
+            elif self.mode == 'test':
+                if random.randint(0, 100) == 1:
+                    self.create_car_object(car)
 
-            if random.randint(0, 100) == 1:
-                Car.objects.create(
-                    make=car['make'],
-                    model=car.get('model'),
-                    model_variant=car.get('model_variant'),
-                    production_year=car.get('production_year'),
-                    engine_power=car.get('engine_power'),
-                    mileage=car.get('mileage'),
-                    engine_capacity=car.get('engine_capacity'),
-                    offer_type=car.get('offer_type'),
-                    price=car['price'],
-                    price_currency=car.get('price_currency'),
-                    state=car.get('state'),
-                    price_dollars=price_dollars,
-                    date_scraped=pendulum.from_format(car.get('date_scraped'), 'DD/MM/YYYY'),
-                    date_issued=pendulum.from_format(car.get('date_issued'), 'DD/MM/YYYY')
-                )
+        self.stdout.write(self.style.SUCCESS(f'Successfully added new CARS models data in {self.mode} mode!'))
 
-        self.stdout.write(self.style.SUCCESS('Successfully added new CARS and CAR_MAKE models data!'))
+    @staticmethod
+    def create_car_object(car):
+        if car['price_currency'] != 'USD':
+            if car['price_currency'] == 'PLN':
+                price_dollars = car['price'] * 0.27
+            if car['price_currency'] == 'EUR':
+                price_dollars = car['price'] * 1.21
+        else:
+            price_dollars = car['price']
+
+        Car.objects.create(
+            make=car['make'],
+            model=car.get('model'),
+            model_variant=car.get('model_variant'),
+            production_year=car.get('production_year'),
+            engine_power=car.get('engine_power'),
+            mileage=car.get('mileage'),
+            engine_capacity=car.get('engine_capacity'),
+            offer_type=car.get('offer_type'),
+            price=car['price'],
+            price_currency=car.get('price_currency'),
+            state=car.get('state'),
+            price_dollars=price_dollars,
+            date_scraped=pendulum.from_format(car.get('date_scraped'), 'DD/MM/YYYY'),
+            date_issued=pendulum.from_format(car.get('date_issued'), 'DD/MM/YYYY')
+        )
