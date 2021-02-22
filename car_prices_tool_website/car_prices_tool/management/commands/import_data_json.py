@@ -1,5 +1,6 @@
 import json
 import random
+import pendulum
 
 from django.core.management.base import BaseCommand
 
@@ -52,8 +53,8 @@ class Command(BaseCommand):
                     price_currency=car.get('price_currency'),
                     state=car.get('state'),
                     price_dollars=price_dollars,
-                    date_scraped=car.get('date_scraped'),
-                    date_issued=car.get('date_issued')
+                    date_scraped=pendulum.from_format(car.get('date_scraped'), 'DD/MM/YYYY'),
+                    date_issued=pendulum.from_format(car.get('date_issued'), 'DD/MM/YYYY')
                 )
 
         self.stdout.write(self.style.SUCCESS('Successfully added new CARS and CAR_MAKE models data!'))

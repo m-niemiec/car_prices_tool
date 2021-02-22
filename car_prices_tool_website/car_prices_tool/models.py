@@ -16,8 +16,8 @@ class Car(models.Model):
     price_currency = models.CharField(max_length=10, null=True)
     state = models.CharField(max_length=10, null=True)
     price_dollars = models.IntegerField(null=True)
-    date_scraped = models.CharField(max_length=10, null=True)
-    date_issued = models.CharField(max_length=10, null=True)
+    date_scraped = models.DateField(null=True)
+    date_issued = models.DateField(null=True)
 
     def __str__(self):
         return self.make
