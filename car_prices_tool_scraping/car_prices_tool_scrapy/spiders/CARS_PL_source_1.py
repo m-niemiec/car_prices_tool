@@ -50,8 +50,8 @@ class CARSPLsource1Spider(spiders.CrawlSpider):
     def parse_car_detail(self, response):
         make = response.xpath('//*[contains(text(), "Marka pojazdu")]/following::*[1]/a/text()').get()
 
-        model = response.xpath('//*[contains(text(), "Model pojazdu")]/following::*[1]/a/text()').get()
-        if model and 'Inny' in model:
+        model = response.xpath('//*[contains(text(), "Model pojazdu")]/following::*[1]/a/text()').get('')
+        if 'Inny' in model:
             model = 'Other'
 
         model_variant = response.xpath('//*[contains(text(), "Wersja")]/following::*[1]/a/text()').get()
