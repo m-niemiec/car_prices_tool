@@ -68,7 +68,7 @@ def api_documentation(request):
 # This view is for AJAX call.
 def load_models(request):
     make = request.GET.get('make')
-    models = Car.objects.values('model').filter(make=make).annotate(count=Count('make')).order_by('count').distinct().reverse()
+    models = Car.objects.filter(make=make).values('model').annotate(count=Count('make')).order_by('count').distinct().reverse()
     models_count = []
     for model in models:
         models_count.append(Car.objects.filter(model=model['model']).count())
