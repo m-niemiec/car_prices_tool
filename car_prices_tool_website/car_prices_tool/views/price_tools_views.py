@@ -1,18 +1,12 @@
-import pendulum
 from datetime import date
 
+import pendulum
 from django import template
-from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.contrib.auth.models import User
-from django.db import IntegrityError
 from django.db.models import Count, Avg
-from django.shortcuts import render, redirect
-from rest_framework.authtoken.models import Token
+from django.shortcuts import render
 
-from car_prices_tool import all_jscharts
-from car_prices_tool.forms import SearchCarForm, FreeSearchCarForm
+from car_prices_tool.forms import SearchCarForm
 from car_prices_tool.models import Car, UserSearchQuery, UserPremiumRank
 
 register = template.Library()
@@ -22,185 +16,10 @@ usd_pln = 3.73
 usd_eur = 0.82
 
 
-# Home is also a landing page.
-def home(request):
-    form = FreeSearchCarForm
-
-    if request.method == 'POST':
-        filled_form = FreeSearchCarForm(request.POST)
-        if filled_form.is_valid():
-            context = {
-                'make': filled_form.cleaned_data['make'],
-                'state': filled_form.cleaned_data['state'],
-                'model': filled_form.cleaned_data['model'],
-            }
-
-            return results_demo(request, context)
-        else:
-            context = {
-                'form': filled_form,
-            }
-
-            return render(request, 'car_prices_tool/home.html', context)
-    else:
-        context = {
-            'form': form,
-            'home_popularmakes_barchart': all_jscharts.home_popularmakes_barchart(),
-            'home_popularproductionyears_piechart': all_jscharts.home_popularproductionyears_piechart(),
-            'home_average_cars_used_info_radarchart': all_jscharts.home_average_cars_used_info_radarchart()
-        }
-
-        return render(request, 'car_prices_tool/home.html', context)
-
-
-def about(request):
-    return render(request, 'car_prices_tool/about.html')
-
-
-def features(request):
-    context = {
-        'home_popularmakes_barchart': all_jscharts.home_popularmakes_barchart(),
-        'home_popularproductionyears_piechart': all_jscharts.home_popularproductionyears_piechart(),
-        'home_average_cars_used_info_radarchart': all_jscharts.home_average_cars_used_info_radarchart()
-    }
-
-    return render(request, 'car_prices_tool/features.html', context)
-
-
-def pricing(request):
-    return render(request, 'car_prices_tool/pricing.html')
-
-
-@login_required(login_url='login')
-def api_documentation(request):
-    return render(request, 'car_prices_tool/api_documentation.html')
-
-
 # This view is called when user search did not return any matches.
 @login_required(login_url='login')
 def no_results(request):
     return render(request, 'car_prices_tool/no_results.html')
-
-
-@login_required(login_url='login')
-def go_premium(request):
-    if request.method == 'GET':
-        try:
-            user_rank_name = UserPremiumRank.objects.filter(user=request.user).values('rank').get()
-        except UserPremiumRank.DoesNotExist:
-            user_rank_name = {}
-
-        if user_rank_name.get('rank') == 'Premium':
-            context = {
-                'message': 'You already have Premium account. Thank you!'
-            }
-
-            return render(request, 'car_prices_tool/go_premium.html', context)
-        else:
-            return render(request, 'car_prices_tool/go_premium.html')
-    else:
-        get_premium = UserPremiumRank(user=request.user, rank='Premium')
-        get_premium.save()
-
-        context = {
-            'message': 'Thank you very much for supporting our website! Enjoy your premium account!'
-        }
-
-        return render(request, 'car_prices_tool/go_premium.html', context)
-
-
-@login_required(login_url='login')
-def go_api_pro(request):
-    if request.method == 'GET':
-        try:
-            user_rank_name = UserPremiumRank.objects.filter(user=request.user).values('rank').get()
-        except UserPremiumRank.DoesNotExist:
-            user_rank_name = {}
-
-        if user_rank_name.get('rank') == 'APIPRO':
-            token = Token.objects.get(user=request.user)
-
-            context = {
-                'message': 'You already have API Pro account. Thank you!',
-                'token': str(token)
-            }
-
-            return render(request, 'car_prices_tool/go_api_pro.html', context)
-        else:
-            return render(request, 'car_prices_tool/go_api_pro.html')
-    else:
-        UserPremiumRank.objects.filter(user=request.user).all().delete()
-        get_api_pro = UserPremiumRank(user=request.user, rank='APIPRO')
-        get_api_pro.save()
-
-        token = Token.objects.create(user=request.user)
-
-        context = {
-            'message': 'Thank you very much for supporting our website! Enjoy your API Pro account!',
-            'token': str(token)
-        }
-
-        return render(request, 'car_prices_tool/go_api_pro.html', context)
-
-
-def sign_up_user(request):
-    if request.method == 'GET':
-        context = {
-            'form': UserCreationForm()
-        }
-
-        return render(request, 'car_prices_tool/signup.html', context)
-    else:
-        if request.POST['password1'] == request.POST['password2']:
-            try:
-                user = User.objects.create_user(username=request.POST['username'], password=request.POST['password1'])
-                user.save()
-                login(request, user)
-
-                return redirect('search')
-            except IntegrityError:
-                context = {
-                    'form': UserCreationForm(),
-                    'error': 'This username is already taken. Please choose another one.'
-                }
-
-                return render(request, 'car_prices_tool/signup.html', context)
-        else:
-            context = {
-                'form': UserCreationForm(),
-                'error': 'Password did not match!'
-            }
-
-            return render(request, 'car_prices_tool/signup.html', context)
-
-
-def log_in_user(request):
-    if request.method == 'GET':
-        context = {
-            'form': AuthenticationForm()
-        }
-
-        return render(request, 'car_prices_tool/login.html', context)
-    else:
-        user = authenticate(request, username=request.POST['username'], password=request.POST['password'])
-        if user:
-            login(request, user)
-
-            return redirect('search')
-        else:
-            context = {
-                'form': AuthenticationForm(),
-                'error': 'Wrong password or username.'
-            }
-
-            return render(request, 'car_prices_tool/login.html', context)
-
-
-def log_out_user(request):
-    if request.method == 'POST':
-        logout(request)
-
-        return render(request, 'car_prices_tool/home.html')
 
 
 @login_required(login_url='login')
@@ -316,19 +135,6 @@ def search(request):
     }
 
     return render(request, 'car_prices_tool/search.html', context)
-
-
-# This view is for AJAX call.
-def load_models(request):
-    make = request.GET.get('make')
-    models = Car.objects.values('model').filter(make=make).annotate(count=Count('make')).order_by('count').distinct().reverse()
-    models_count = []
-    for model in models:
-        models_count.append(Car.objects.filter(model=model['model']).count())
-
-    data = zip(models, models_count)
-
-    return render(request, 'car_prices_tool/models_dropdown_list_options.html', {'data': data})
 
 
 @login_required(login_url='login')
