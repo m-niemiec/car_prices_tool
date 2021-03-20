@@ -16,7 +16,7 @@ Including another URLconf
 import api
 from api import urls
 from django.contrib import admin
-from django.contrib.auth import views as auth_views
+from django.contrib.auth import views as django_auth_views
 from django.urls import path, include
 from car_prices_tool.views import auth_views, price_tools_views, templates_views, users_views
 
@@ -39,12 +39,9 @@ urlpatterns = [
     path('api_documentation/', templates_views.api_documentation, name='api_documentation'),
 
     # Authorization:
-    path('signup/', auth_views.sign_up_user, name='signup'),
-    # path('signup/', views.SignUpView.as_view(), name='signup'),
-    path('login/', auth_views.log_in_user, name='login'),
-    # path('login/', auth_views.LoginView.as_view(), name='login'),
-    path('logout/', auth_views.log_out_user, name='logout'),
-    # path('logout/', auth_views.LogoutView, name='logout'),
+    path('signup/', auth_views.SignUpView.as_view(), name='signup'),
+    path('login/', django_auth_views.LoginView.as_view(), name='login'),
+    path('logout/', django_auth_views.LogoutView.as_view(), name='logout'),
 
     # API:
     path('api/', include(api.urls)),
