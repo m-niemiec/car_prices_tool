@@ -1,3 +1,16 @@
+@media only screen and (max-width: 600px) {
+    .table {
+        table-layout:fixed;
+    }
+
+    .td {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+}
+
 #parent {
     list-style: none;
     width: 100%;
@@ -53,4 +66,9 @@ body > .navbar .btn-success {
     margin: 0 auto;
     display: block;
     text-align: center;
+}
+
+.row-chart-js {
+  display: flex;
+  justify-content: center;
 }
