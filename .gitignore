@@ -34,7 +34,7 @@ TO_DO.rtf
 **.egg
 **__pypackages__/
 **scrapinghub.yml
-**file.json
+# **file.json
 **test.json
 **.idea
 **.DS_Store
