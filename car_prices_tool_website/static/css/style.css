@@ -1,6 +1,7 @@
 @media only screen and (max-width: 600px) {
     .table {
         table-layout:fixed;
+        font-size: 50% !important;
     }
 
     .td {
@@ -8,6 +9,16 @@
         text-overflow: ellipsis;
         word-wrap: break-word;
         overflow-wrap: break-word;
+    }
+
+    .container {
+        margin-top: 0px;
+        margin-bottom: 0px;
+    }
+
+    .vertical-center {
+        display: flex !important;
+        align-items: center !important;
     }
 }
 
@@ -66,6 +77,10 @@ body > .navbar .btn-success {
     margin: 0 auto;
     display: block;
     text-align: center;
+}
+
+.tires {
+    font-size: 350%;
 }
 
 .row-chart-js {
