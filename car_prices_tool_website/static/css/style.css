@@ -87,3 +87,7 @@ body > .navbar .btn-success {
   display: flex;
   justify-content: center;
 }
+
+#canvas {
+    width:300%;
+}
