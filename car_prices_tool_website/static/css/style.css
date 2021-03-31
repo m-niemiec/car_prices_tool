@@ -12,13 +12,8 @@
     }
 
     .container {
-        margin-top: 0px;
-        margin-bottom: 0px;
-    }
-
-    .vertical-center {
-        display: flex !important;
-        align-items: center !important;
+        margin-top: 0px !important;
+        margin-bottom: 0px !important;
     }
 }
 
@@ -86,8 +81,4 @@ body > .navbar .btn-success {
 .row-chart-js {
   display: flex;
   justify-content: center;
-}
-
-#canvas {
-    width:300%;
 }
