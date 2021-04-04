@@ -74,10 +74,17 @@ body > .navbar .btn-success {
     text-align: center;
 }
 
-.tires {
-    font-size: 350%;
+#tires {
+    background: #000000;
+    width: 50px;
+    height: 50px;
+    margin-top: 10px;
+    margin-left: 30px;
+    margin-right: 60px;
+    border-radius: 50%;
+    display: inline-block;
+    overflow: hidden;
 }
-
 .row-chart-js {
   display: flex;
   justify-content: center;
