@@ -85,7 +85,16 @@ body > .navbar .btn-success {
     display: inline-block;
     overflow: hidden;
 }
+
 .row-chart-js {
   display: flex;
   justify-content: center;
+}
+
+.alert-info {
+    font-size: 1.5rem;
+}
+
+.alert-success {
+    font-size: 1.5rem;
 }
